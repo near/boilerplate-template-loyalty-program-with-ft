@@ -10,9 +10,9 @@ node_modules
 /out
 frontend/dist
 
-contract/build
-contract/neardev
-contract/target
+contracts/build
+contracts/neardev
+contracts/target
 
 # testing
 /coverage

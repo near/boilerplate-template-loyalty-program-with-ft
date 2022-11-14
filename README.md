@@ -7,7 +7,6 @@
     </picture>
   </a>
 </h1>
-
 <div align="center">
   Rust Boilerplate Template
   <br />

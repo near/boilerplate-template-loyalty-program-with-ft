@@ -42,10 +42,7 @@ h1 {
   text-align: center;
   font-size: 1.5em;
 }
-.greeting {
-  color: var(--secondary);
-  text-decoration: underline;
-}
+
 h2 {
   text-align: center;
 }
@@ -89,6 +86,7 @@ ul.information {
   flex: 1;
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
+  margin-bottom: 10px;
 }
 .change label {
   display: block;

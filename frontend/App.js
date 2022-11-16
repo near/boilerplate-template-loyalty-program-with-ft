@@ -21,11 +21,6 @@ export default function App({ isSignedIn, helloNEAR, wallet }) {
       });
   }, []);
 
-  /// If user not signed-in with wallet - show prompt
-  // if (!isSignedIn) {
-  //   // Sign-in flow will reload the page later
-  //   return <SignInPrompt greeting={valueFromBlockchain} onClick={() => wallet.signIn()} />;
-  // }
 
   function changeGreeting(e) {
     e.preventDefault();
@@ -49,22 +44,22 @@ export default function App({ isSignedIn, helloNEAR, wallet }) {
 
   return (
     <>
-      {/* <SignOutButton accountId={wallet.accountId} onClick={() => wallet.signOut()} /> */}
+      {isSignedIn &&
+        <SignOutButton accountId={wallet.accountId} onClick={() => wallet.signOut()} />
+      }
       <main className={uiPleaseWait ? 'please-wait' : ''}>
         <h1>
           Merchant view
         </h1>
         <form onSubmit={createLoayltyToken} className="change">
-          {/* <div> */}
-            <input autoComplete="off" id="name" placeholder="Name" />
-            <input autoComplete="off" id="symbol" placeholder="Symbol" />
-            <input autoComplete="off" id="merchantWallet" placeholder="Merchant wallet" />
-            <input type="number" autoComplete="off" placeholder="Total supply" id="totalSupply" />
-            <button>
-              <span>Create Loyalty Token</span>
-              <div className="loader"></div>
-            </button>
-          {/* </div> */}
+          <input autoComplete="off" id="name" placeholder="Name" />
+          <input autoComplete="off" id="symbol" placeholder="Symbol" />
+          <button className="walletButton" disabled={isSignedIn} onClick={() => wallet.signIn()}>{isSignedIn ? wallet.accountId : "Sign in with Near wallet"}</button>
+          <input type="number" autoComplete="off" placeholder="Total supply" id="totalSupply" />
+          <button>
+            <span>Create Loyalty Token</span>
+            <div className="loader"></div>
+          </button>
         </form>
       </main>
     </>

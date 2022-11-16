@@ -3,7 +3,7 @@ import React from 'react';
 
 import './assets/global.css';
 
-import { EducationalText, SignInPrompt, SignOutButton } from './ui-components';
+import { SignInPrompt, SignOutButton } from './ui-components';
 
 export default function App({ isSignedIn, helloNEAR, wallet }) {
   const [valueFromBlockchain, setValueFromBlockchain] = React.useState();
@@ -22,10 +22,10 @@ export default function App({ isSignedIn, helloNEAR, wallet }) {
   }, []);
 
   /// If user not signed-in with wallet - show prompt
-  if (!isSignedIn) {
-    // Sign-in flow will reload the page later
-    return <SignInPrompt greeting={valueFromBlockchain} onClick={() => wallet.signIn()} />;
-  }
+  // if (!isSignedIn) {
+  //   // Sign-in flow will reload the page later
+  //   return <SignInPrompt greeting={valueFromBlockchain} onClick={() => wallet.signIn()} />;
+  // }
 
   function changeGreeting(e) {
     e.preventDefault();
@@ -42,24 +42,30 @@ export default function App({ isSignedIn, helloNEAR, wallet }) {
       });
   }
 
+  function createLoayltyToken(e) {
+    e.preventDefault();
+    console.log("Loyalty Token Created!");
+  }
+
   return (
     <>
-      <SignOutButton accountId={wallet.accountId} onClick={() => wallet.signOut()} />
+      {/* <SignOutButton accountId={wallet.accountId} onClick={() => wallet.signOut()} /> */}
       <main className={uiPleaseWait ? 'please-wait' : ''}>
         <h1>
-          The contract says: <span className="greeting">{valueFromBlockchain}</span>
+          Merchant view
         </h1>
-        <form onSubmit={changeGreeting} className="change">
-          <label>Change greeting:</label>
-          <div>
-            <input autoComplete="off" defaultValue={valueFromBlockchain} id="greetingInput" />
+        <form onSubmit={createLoayltyToken} className="change">
+          {/* <div> */}
+            <input autoComplete="off" id="name" placeholder="Name" />
+            <input autoComplete="off" id="symbol" placeholder="Symbol" />
+            <input autoComplete="off" id="merchantWallet" placeholder="Merchant wallet" />
+            <input type="number" autoComplete="off" placeholder="Total supply" id="totalSupply" />
             <button>
-              <span>Save</span>
+              <span>Create Loyalty Token</span>
               <div className="loader"></div>
             </button>
-          </div>
+          {/* </div> */}
         </form>
-        <EducationalText />
       </main>
     </>
   );

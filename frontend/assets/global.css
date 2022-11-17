@@ -176,6 +176,46 @@ li {
   margin-bottom: 10px;
 }
 
+.ftDetailsWrapper {
+  display: flex;
+  flex-direction: column;
+  align-content: stretch;
+  justify-content: space-evenly;
+  align-items: stretch;
+  font-size: 1em;
+  border: 2px solid var(--light-gray);
+  padding: 0.5em;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-content: stretch;
+  justify-content: space-evenly;
+  border: 2px solid var(--light-gray);
+  padding: 0.5em;
+}
+
+.row div {
+  background-color: var(--light-gray);
+  border: none;
+  border-radius: 5px 0 0 5px;
+  caret-color: var(--primary);
+  color: inherit;
+  padding: 0.25em 0.5em;
+  margin-bottom: 5px;
+}
+
+.ftDetails {
+  background-color: var(--light-gray);
+  border: none;
+  border-radius: 5px 0 0 5px;
+  caret-color: var(--primary);
+  color: inherit;
+  padding: 0.25em 0.5em;
+  margin-bottom: 5px;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     --bg: #1e1e1e;

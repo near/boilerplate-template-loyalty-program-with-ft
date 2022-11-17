@@ -14,6 +14,7 @@ export default function App({ isSignedIn, helloNEAR, wallet }) {
   const [name, setName] = React.useState("");
   const [symbol, setSymbol] = React.useState("");
   const [totalSupply, setTotalSupply] = React.useState("");
+  const [errorMessage, setErrorMessage] = React.useState("");
 
   // Get blockchian state once on component load
   React.useEffect(() => {
@@ -44,6 +45,16 @@ export default function App({ isSignedIn, helloNEAR, wallet }) {
 
   function createLoayltyToken(e) {
     e.preventDefault();
+
+    if (totalSupply <= 0) {
+      setErrorMessage("Total supply should be > 0");
+      return;
+    }
+    if (!isSignedIn) {
+      setErrorMessage("Sign in to a Near wallet before creating a loyalty token");
+      return;
+    }
+
     console.log("Loyalty Token Created!");
     console.log("Name: " + name);
     console.log("Symbol: " + symbol);
@@ -81,15 +92,16 @@ export default function App({ isSignedIn, helloNEAR, wallet }) {
             Merchant view
           </h1>
           <form onSubmit={createLoayltyToken} className="change">
-            <input autoComplete="off" id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
-            <input autoComplete="off" id="symbol" value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder="Symbol" />
+            <input required autoComplete="off" id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
+            <input required autoComplete="off" id="symbol" value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder="Symbol" />
             <button className="walletButton" disabled={isSignedIn} onClick={() => wallet.signIn()}>{isSignedIn ? wallet.accountId : "Sign in with Near wallet"}</button>
-            <input type="number" autoComplete="off" id="totalSupply" value={totalSupply} onChange={(e) => setTotalSupply(e.target.value)} placeholder="Total supply"/>
+            <input required type="number" autoComplete="off" id="totalSupply" value={totalSupply} onChange={(e) => setTotalSupply(e.target.value)} placeholder="Total supply"/>
             <button>
               <span>Create Loyalty Token</span>
               <div className="loader"></div>
             </button>
           </form>
+          <div className="error">{errorMessage}</div>
         </main>
       </>
     }

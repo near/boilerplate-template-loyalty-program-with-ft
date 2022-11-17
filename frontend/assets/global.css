@@ -216,6 +216,11 @@ li {
   margin-bottom: 5px;
 }
 
+.error {
+  border: none;
+  color: var(--primary);
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     --bg: #1e1e1e;

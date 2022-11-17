@@ -5,11 +5,11 @@ import './assets/global.css';
 
 import { SignOutButton } from './ui-components';
 
-export default function App({ isSignedIn, helloNEAR, wallet }) {
-  const [valueFromBlockchain, setValueFromBlockchain] = React.useState();
+export default function App({ isSignedIn, contract, wallet }) {
+  // const [valueFromBlockchain, setValueFromBlockchain] = React.useState();
   const [isInitialized, setIsInitialized] = React.useState(false);
 
-  const [uiPleaseWait, setUiPleaseWait] = React.useState(true);
+  const [uiPleaseWait, setUiPleaseWait] = React.useState(false); //TODO
 
   const [name, setName] = React.useState("");
   const [symbol, setSymbol] = React.useState("");
@@ -18,30 +18,14 @@ export default function App({ isSignedIn, helloNEAR, wallet }) {
 
   // Get blockchian state once on component load
   React.useEffect(() => {
-    helloNEAR
-      .getGreeting()
-      .then(setValueFromBlockchain)
-      .catch(alert)
-      .finally(() => {
-        setUiPleaseWait(false);
-      });
+    // contract
+    //   .isContractInitialized()
+    //   .then(setIsInitialized)
+    //   .catch(alert)
+    //   .finally(() => {
+    //     setUiPleaseWait(false);
+    //   });
   }, []);
-
-
-  // function changeGreeting(e) {
-  //   e.preventDefault();
-  //   setUiPleaseWait(true);
-  //   const { greetingInput } = e.target.elements;
-  //   helloNEAR
-  //     .setGreeting(greetingInput.value)
-  //     .then(async () => {
-  //       return helloNEAR.getGreeting();
-  //     })
-  //     .then(setValueFromBlockchain)
-  //     .finally(() => {
-  //       setUiPleaseWait(false);
-  //     });
-  // }
 
   function createLoayltyToken(e) {
     e.preventDefault();
@@ -59,7 +43,18 @@ export default function App({ isSignedIn, helloNEAR, wallet }) {
     console.log("Name: " + name);
     console.log("Symbol: " + symbol);
     console.log("Total supply: " + totalSupply);
-    setIsInitialized(true);
+
+    setUiPleaseWait(true);
+
+    contract
+    .createFungibleTokenPool(name, symbol, totalSupply)
+    .then(() => {
+      setIsInitialized(true);
+    })
+    .catch(alert)
+    .finally(() => {
+      setUiPleaseWait(false);
+    })
   }
 
   return (

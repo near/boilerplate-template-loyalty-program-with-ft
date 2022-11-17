@@ -11,9 +11,9 @@ export default function App({ isSignedIn, helloNEAR, wallet }) {
 
   const [uiPleaseWait, setUiPleaseWait] = React.useState(true);
 
-  const [name, setName] = React.useState();
-  const [symbol, setSymbol] = React.useState();
-  const [totalSupply, setTotalSupply] = React.useState();
+  const [name, setName] = React.useState("");
+  const [symbol, setSymbol] = React.useState("");
+  const [totalSupply, setTotalSupply] = React.useState("");
 
   // Get blockchian state once on component load
   React.useEffect(() => {
@@ -45,13 +45,33 @@ export default function App({ isSignedIn, helloNEAR, wallet }) {
   function createLoayltyToken(e) {
     e.preventDefault();
     console.log("Loyalty Token Created!");
+    console.log("Name: " + name);
+    console.log("Symbol: " + symbol);
+    console.log("Total supply: " + totalSupply);
     setIsInitialized(true);
   }
 
   return (
     
     <>
-    {!isInitialized &&
+    {isInitialized ?
+      <>
+        <main className={uiPleaseWait ? 'please-wait' : 'ftDetailsWrapper'}>
+          <h1>
+            Merchant view
+          </h1>
+          <div className='row'>
+            <div>Loyalty coin name</div>
+            <div>Logged-in wallet</div>
+          </div>
+          <div className="ftDetailsWrapper">
+            <div className='ftDetails'>Name</div>
+            <div className='ftDetails'>Symbol</div>
+            <div className='ftDetails'>Total supply</div>
+          </div>
+        </main>
+      </>
+      :
       <>
         {isSignedIn &&
           <SignOutButton accountId={wallet.accountId} onClick={() => wallet.signOut()} />
@@ -70,24 +90,6 @@ export default function App({ isSignedIn, helloNEAR, wallet }) {
               <div className="loader"></div>
             </button>
           </form>
-        </main>
-      </>
-    }
-    {isInitialized &&
-      <>
-        <main className={uiPleaseWait ? 'please-wait' : 'ftDetailsWrapper'}>
-          <h1>
-            Merchant view
-          </h1>
-          <div className='row'>
-            <div>Loyalty coin name</div>
-            <div>Logged-in wallet</div>
-          </div>
-          <div className="ftDetailsWrapper">
-            <div className='ftDetails'>Name</div>
-            <div className='ftDetails'>Symbol</div>
-            <div className='ftDetails'>Total supply</div>
-          </div>
         </main>
       </>
     }

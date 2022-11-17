@@ -8,8 +8,7 @@ import { SignOutButton } from './ui-components';
 export default function App({ isSignedIn, contract, wallet }) {
   // const [valueFromBlockchain, setValueFromBlockchain] = React.useState();
   const [isInitialized, setIsInitialized] = React.useState(false);
-
-  const [uiPleaseWait, setUiPleaseWait] = React.useState(false); //TODO
+  const [uiPleaseWait, setUiPleaseWait] = React.useState(true);
 
   const [name, setName] = React.useState("");
   const [symbol, setSymbol] = React.useState("");
@@ -18,13 +17,13 @@ export default function App({ isSignedIn, contract, wallet }) {
 
   // Get blockchian state once on component load
   React.useEffect(() => {
-    // contract
-    //   .isContractInitialized()
-    //   .then(setIsInitialized)
-    //   .catch(alert)
-    //   .finally(() => {
-    //     setUiPleaseWait(false);
-    //   });
+    contract
+      .isContractInitialized()
+      .then(setIsInitialized)
+      .catch(alert)
+      .finally(() => {
+        setUiPleaseWait(false);
+      });
   }, []);
 
   function createLoayltyToken(e) {

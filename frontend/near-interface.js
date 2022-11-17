@@ -7,12 +7,15 @@ export class LoyaltyProgramWithFtContractInterface {
   }
 
   async createFungibleTokenPool(name, symbol, totalSupply) {
-    console.log("CONTRACTID: " + this.contractId);
     return await this.wallet.callMethod({
       contractId: this.contractId,
       method: 'new_fungible_token_pool',
       args: { owner_id: this.wallet.accountId,  name, symbol, total_supply: totalSupply },
     })
+  }
+
+  async isContractInitialized() {
+    return await this.wallet.viewMethod({ contractId: this.contractId, method: 'is_initialized' })
   }
 
   // async getGreeting() {

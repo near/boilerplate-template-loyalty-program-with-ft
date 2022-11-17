@@ -46,7 +46,7 @@ impl Contract {
             },
         )
     }
-    
+
     #[init]
     pub fn new_default_meta(owner_id: AccountId, total_supply: U128) -> Self {
         Self::new(
@@ -95,6 +95,10 @@ impl Contract {
 
     fn on_tokens_burned(&mut self, account_id: AccountId, amount: Balance) {
         log!("Account @{} burned {}", account_id, amount);
+    }
+
+    pub fn is_initialized(&self) -> bool {
+        env::state_exists()
     }
 }
 

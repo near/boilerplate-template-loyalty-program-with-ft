@@ -17,14 +17,31 @@ export default function App({ isSignedIn, contract, wallet }) {
 
   // Get blockchian state once on component load
   React.useEffect(() => {
+    // contract
+    //   .isContractInitialized()
+    //   .then(setIsInitialized)
+    //   .catch(alert)
+    //   .finally(() => {
+         setUiPleaseWait(false);
+    //   });
+  }, []);
+
+
+  React.useEffect(() => {
     contract
-      .isContractInitialized()
-      .then(setIsInitialized)
+      .getFungibleTokenMetadata()
+      .then((metadata) => {
+        setName(metadata.name);
+        setSymbol(metadata.symbol);
+      })
+      .then(() => {
+        contract.getTotalSupply().then((totalSupply) => setTotalSupply(totalSupply))
+      })
       .catch(alert)
       .finally(() => {
         setUiPleaseWait(false);
       });
-  }, []);
+  }, [isInitialized]);
 
   function createLoayltyToken(e) {
     e.preventDefault();
@@ -37,11 +54,6 @@ export default function App({ isSignedIn, contract, wallet }) {
       setErrorMessage("Sign in to a Near wallet before creating a loyalty token");
       return;
     }
-
-    console.log("Loyalty Token Created!");
-    console.log("Name: " + name);
-    console.log("Symbol: " + symbol);
-    console.log("Total supply: " + totalSupply);
 
     setUiPleaseWait(true);
 
@@ -66,13 +78,13 @@ export default function App({ isSignedIn, contract, wallet }) {
             Merchant view
           </h1>
           <div className='row'>
-            <div>Loyalty coin name</div>
-            <div>Logged-in wallet</div>
+            <div>Loyalty coin name: {name}</div>
+            <div>Logged-in wallet: {wallet.accountId}</div>
           </div>
           <div className="ftDetailsWrapper">
-            <div className='ftDetails'>Name</div>
-            <div className='ftDetails'>Symbol</div>
-            <div className='ftDetails'>Total supply</div>
+            <div className='ftDetails'>{name}</div>
+            <div className='ftDetails'>{symbol}</div>
+            <div className='ftDetails'>{totalSupply}</div>
           </div>
         </main>
       </>

@@ -18,6 +18,14 @@ export class LoyaltyProgramWithFtContractInterface {
     return await this.wallet.viewMethod({ contractId: this.contractId, method: 'is_initialized' })
   }
 
+  async getFungibleTokenMetadata() {
+    return await this.wallet.viewMethod({ contractId: this.contractId, method: 'ft_metadata' })
+  }
+
+  async getTotalSupply() {
+    return await this.wallet.viewMethod({ contractId: this.contractId, method: 'ft_total_supply' })
+  }
+
   // async getGreeting() {
   //   return await this.wallet.viewMethod({ contractId: this.contractId, method: 'get_greeting' });
   // }

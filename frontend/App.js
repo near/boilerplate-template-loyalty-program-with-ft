@@ -6,7 +6,6 @@ import './assets/global.css';
 import { SignOutButton } from './ui-components';
 
 export default function App({ isSignedIn, contract, wallet }) {
-  // const [valueFromBlockchain, setValueFromBlockchain] = React.useState();
   const [isInitialized, setIsInitialized] = React.useState(false);
   const [uiPleaseWait, setUiPleaseWait] = React.useState(true);
 
@@ -25,23 +24,6 @@ export default function App({ isSignedIn, contract, wallet }) {
          setUiPleaseWait(false);
     //   });
   }, []);
-
-
-  // React.useEffect(() => {
-  //   contract
-  //     .getFungibleTokenMetadata()
-  //     .then((metadata) => {
-  //       setName(metadata.name);
-  //       setSymbol(metadata.symbol);
-  //     })
-  //     .then(() => {
-  //       contract.getTotalSupply().then((totalSupply) => setTotalSupply(totalSupply))
-  //     })
-  //     .catch(alert)
-  //     .finally(() => {
-  //       setUiPleaseWait(false);
-  //     });
-  // }, [isInitialized]);
 
   function createLoayltyToken(e) {
     e.preventDefault();

@@ -7,6 +7,7 @@ const test = anyTest as TestFn<{
 }>;
 
 const MAX_GAS = "300000000000000";
+const FT_DEPOSIT = "197907910000000000000000000";
 
 test.beforeEach(async (t) => {
   // Init the worker and start a Sandbox server
@@ -49,7 +50,7 @@ test("create_factory_subaccount_and_deploy tests", async (t) => {
     token_name: "TOKEN NAME", 
     token_symbol: "SYMBOL", 
     token_total_supply: "10000", },
-    { gas: MAX_GAS, attachedDeposit: "197907910000000000000000000" }
+    { gas: MAX_GAS, attachedDeposit: FT_DEPOSIT }
   );
 
   t.is(create, true);

@@ -9,13 +9,21 @@ export class LoyaltyProgramWithFtContractInterface {
   async createFungibleTokenPool(name, symbol, totalSupply) {
     return await this.wallet.callMethod({
       contractId: this.contractId,
-      method: 'new_fungible_token_pool',
-      args: { owner_id: this.wallet.accountId,  name, symbol, total_supply: totalSupply },
+      method: 'create_factory_subaccount_and_deploy',
+      args: { 
+        name: "ft",
+        ft_owner_id: this.wallet.accountId, 
+        token_name: name, 
+        token_symbol: symbol, 
+        token_total_supply: totalSupply,
+      },
+      deposit: "197907910000000000000000000",
+      gas: "300000000000000"
     })
   }
 
   async isContractInitialized() {
-    return await this.wallet.viewMethod({ contractId: this.contractId, method: 'is_initialized' })
+    return false; //await this.wallet.viewMethod({ contractId: this.contractId, method: 'is_initialized' })
   }
 
   async getFungibleTokenMetadata() {

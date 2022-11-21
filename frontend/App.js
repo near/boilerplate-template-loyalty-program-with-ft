@@ -27,21 +27,21 @@ export default function App({ isSignedIn, contract, wallet }) {
   }, []);
 
 
-  React.useEffect(() => {
-    contract
-      .getFungibleTokenMetadata()
-      .then((metadata) => {
-        setName(metadata.name);
-        setSymbol(metadata.symbol);
-      })
-      .then(() => {
-        contract.getTotalSupply().then((totalSupply) => setTotalSupply(totalSupply))
-      })
-      .catch(alert)
-      .finally(() => {
-        setUiPleaseWait(false);
-      });
-  }, [isInitialized]);
+  // React.useEffect(() => {
+  //   contract
+  //     .getFungibleTokenMetadata()
+  //     .then((metadata) => {
+  //       setName(metadata.name);
+  //       setSymbol(metadata.symbol);
+  //     })
+  //     .then(() => {
+  //       contract.getTotalSupply().then((totalSupply) => setTotalSupply(totalSupply))
+  //     })
+  //     .catch(alert)
+  //     .finally(() => {
+  //       setUiPleaseWait(false);
+  //     });
+  // }, [isInitialized]);
 
   function createLoayltyToken(e) {
     e.preventDefault();

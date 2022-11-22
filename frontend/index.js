@@ -1,6 +1,6 @@
 // React
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import App from './App';
 
 // NEAR
@@ -17,8 +17,8 @@ const contract = new LoyaltyProgramWithFtContractInterface({ contractId: process
 // Setup on page load
 window.onload = async () => {
   const isSignedIn = await wallet.startUp();
-
-  ReactDOM.render(
+  const root = createRoot(document.getElementById('root'));
+  root.render(
     <App isSignedIn={isSignedIn} contract={contract} wallet={wallet} />,
     document.getElementById('root'),
   );

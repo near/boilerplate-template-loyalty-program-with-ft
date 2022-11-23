@@ -7,7 +7,7 @@ const test = anyTest as TestFn<{
 }>;
 
 const MAX_GAS = "300000000000000";
-const FT_DEPOSIT = "197907910000000000000000000";
+const FT_DEPOSIT = "19750000000000000000000000";
 
 test.beforeEach(async (t) => {
   // Init the worker and start a Sandbox server
@@ -17,8 +17,7 @@ test.beforeEach(async (t) => {
   const root = worker.rootAccount;
 
   // Create test accounts
-  const alice = await root.createSubAccount("alice", {initialBalance: "19790791000000000000000000000"});
-  const beneficiary = await root.createSubAccount("beneficiary");
+  const merchant = await root.createSubAccount("merchant");
   const factory = await root.createSubAccount("factory");
 
   // Deploy factory contract
@@ -28,8 +27,7 @@ test.beforeEach(async (t) => {
   t.context.worker = worker;
   t.context.accounts = {
     factory,
-    alice,
-    beneficiary,
+    merchant
   };
 });
 
@@ -40,16 +38,18 @@ test.afterEach(async (t) => {
 });
 
 test("create_factory_subaccount_and_deploy tests", async (t) => {
-  const { factory, alice, beneficiary } = t.context.accounts;
+  const { factory, merchant } = t.context.accounts;
 
-  let create = await alice.call(
+  let create = await merchant.call(
     factory,
     "create_factory_subaccount_and_deploy",
-    { name: "ft",
-    ft_owner_id: beneficiary, 
-    token_name: "TOKEN NAME", 
-    token_symbol: "SYMBOL", 
-    token_total_supply: "10000", },
+    {
+      name: "ft",
+      ft_owner_id: merchant,
+      token_name: "Reward Token",
+      token_symbol: "RT",
+      token_total_supply: "10000",
+    },
     { gas: MAX_GAS, attachedDeposit: FT_DEPOSIT }
   );
 

@@ -12,8 +12,8 @@
     "build:ft": "cd fungible-token && ./build.sh",
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "cd contracts && cargo test",
-    "test:integration": "cd integration-tests && npm test -- -- \"./contract/target/wasm32-unknown-unknown/release/loyalty_program_with_ft.wasm\"",
-    "postinstall": "cd frontend && npm install && cd .. && echo rs tests && echo rs contract",
+    "test:integration": "npm run build:contract && cd integration-tests && npm test -- -- \"./contract/target/wasm32-unknown-unknown/release/loyalty_program_with_ft.wasm\"",
+    "postinstall": "cd frontend && npm install && cd .. && cd integration-tests && npm install && echo rs contract",
     "lint": "cd frontend && npm run lint",
     "prettier:check": "cd frontend && npm run prettier:check",
     "prepare": "husky install"

@@ -10,9 +10,14 @@ node_modules
 /out
 frontend/dist
 
+
+/dist
 contracts/build
 contracts/neardev
 contracts/target
+/frontend/dist
+/fungible-token/target
+/integration-tests/node_modules
 
 # testing
 /coverage

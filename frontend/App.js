@@ -16,14 +16,32 @@ export default function App({ isSignedIn, contract, wallet }) {
 
   // Get blockchian state once on component load
   React.useEffect(() => {
-    // contract
-    //   .isContractInitialized()
-    //   .then(setIsInitialized)
-    //   .catch(alert)
-    //   .finally(() => {
+    contract
+      .isContractInitialized()
+      .then(setIsInitialized)
+      .catch(alert)
+      .finally(() => {
          setUiPleaseWait(false);
-    //   });
+      });
   }, []);
+
+  React.useEffect(() => {
+    if (isInitialized) {
+      contract
+        .getFungibleTokenMetadata()
+        .then((metadata) => {
+          setName(metadata.name);
+          setSymbol(metadata.symbol);
+        })
+        .then(() => {
+          contract.getTotalSupply().then((totalSupply) => setTotalSupply(totalSupply))
+        })
+        .catch(alert)
+        .finally(() => {
+          setUiPleaseWait(false);
+        });
+    }
+  }, [isInitialized]);
 
   function createLoayltyToken(e) {
     e.preventDefault();
@@ -43,6 +61,7 @@ export default function App({ isSignedIn, contract, wallet }) {
     .createFungibleTokenPool(name, symbol, totalSupply)
     .then(() => {
       setIsInitialized(true);
+      contract.getFungibleTokenMetdata();
     })
     .catch(alert)
     .finally(() => {

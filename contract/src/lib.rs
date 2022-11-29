@@ -10,10 +10,14 @@ const NO_DEPOSIT: Balance = 0;
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
-pub struct Contract {}
+pub struct Contract {
+    pub are_contracts_initialized: bool,
+}
 
 impl Default for Contract {
     fn default() -> Self {
-        Self {}
+        Self {
+            are_contracts_initialized: false,
+        }
     }
 }

@@ -12,9 +12,8 @@ node_modules
 /contract/neardev
 /frontend/dist
 /frontend/.parcel-cache
-
-# keys
-/templates/react/neardev
+/fungible-token/target
+/integration-tests/node_modules
 
 # testing
 /coverage

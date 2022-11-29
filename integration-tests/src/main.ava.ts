@@ -54,4 +54,24 @@ test("create_factory_subaccount_and_deploy tests", async (t) => {
   );
 
   t.is(create, true);
+  let is_initialized = await merchant.call(
+    factory,
+    "is_initialized",
+    {},
+    { gas: MAX_GAS, attachedDeposit: FT_DEPOSIT }
+  );
+  t.is(is_initialized, true);
+});
+
+test("isInitialized for non deployed contracts", async (t) => {
+  const { factory, merchant } = t.context.accounts;
+
+  let is_initialized = await merchant.call(
+    factory,
+    "is_initialized",
+    {},
+    { gas: MAX_GAS, attachedDeposit: FT_DEPOSIT }
+  );
+
+  t.is(is_initialized, false);
 });

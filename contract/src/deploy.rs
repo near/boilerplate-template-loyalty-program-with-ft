@@ -89,6 +89,7 @@ impl Contract {
     ) -> bool {
         if let Ok(_result) = create_deploy_result {
             log!(format!("Correctly created and deployed to {account}"));
+            self.are_contracts_initialized = true;
             return true;
         };
 
@@ -97,5 +98,9 @@ impl Contract {
         ));
         Promise::new(user).transfer(attached);
         false
+    }
+
+    pub fn is_initialized(&self) -> bool {
+        self.are_contracts_initialized.into()
     }
 }

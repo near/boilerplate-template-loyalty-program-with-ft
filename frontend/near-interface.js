@@ -5,13 +5,14 @@ const FT_CONTRACT_NAME = "ft";
 
 export class LoyaltyProgramWithFtContractInterface {
   constructor({ contractId, walletToUse }) {
-    this.contractId = contractId;
+    this.baseContractId = contractId;
+    this.ftContractId = FT_CONTRACT_NAME + "." + this.baseContractId
     this.wallet = walletToUse;
   }
 
   async createFungibleTokenPool(name, symbol, totalSupply) {
     return await this.wallet.callMethod({
-      contractId: this.contractId,
+      contractId: this.baseContractId,
       method: 'create_factory_subaccount_and_deploy',
       args: { 
         name: FT_CONTRACT_NAME,
@@ -26,14 +27,14 @@ export class LoyaltyProgramWithFtContractInterface {
   }
 
   async isContractInitialized() {
-    return false;
+    return await this.wallet.viewMethod({ contractId: this.baseContractId, method: 'is_initialized' })
   }
 
-  // async getFungibleTokenMetadata() {
-  //   return await this.wallet.viewMethod({ contractId: this.contractId, method: 'ft_metadata' })
-  // }
+  async getFungibleTokenMetadata() {
+    return await this.wallet.viewMethod({ contractId: this.ftContractId, method: 'ft_metadata' })
+  }
 
-  // async getTotalSupply() {
-  //   return await this.wallet.viewMethod({ contractId: this.contractId, method: 'ft_total_supply' })
-  // }
+  async getTotalSupply() {
+    return await this.wallet.viewMethod({ contractId: this.ftContractId, method: 'ft_total_supply' })
+  }
 }

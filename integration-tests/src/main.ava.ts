@@ -60,11 +60,19 @@ test("create_factory_subaccount_and_deploy tests", async (t) => {
   t.false(hasNot)
 
   const program: Program = await factory.view("user_program", { account_id: merchant.accountId })
-  t.is(program.ft, `ft.${factory.accountId}`)
+  t.is(program.ft.account_id, `ft.${factory.accountId}`)
 });
 
+interface FTMetadata {
+  account_id: string
+  manager: string,
+  token_name: String,
+  token_symbol: String,
+  token_total_supply: string,
+}
+
 interface Program {
-  ft: string
+  ft: FTMetadata
   manager: string
 }
 

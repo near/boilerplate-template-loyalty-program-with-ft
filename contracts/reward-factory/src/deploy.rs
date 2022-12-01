@@ -3,7 +3,7 @@ use near_sdk::serde::Serialize;
 use near_sdk::{env, log, near_bindgen, AccountId, Balance, Promise, PromiseError, PublicKey};
 use near_sdk::env::STORAGE_PRICE_PER_BYTE;
 
-use crate::{Contract, ContractExt, NO_DEPOSIT, TGAS, FT_CONTRACT, ProgramInfo};
+use crate::{Contract, ContractExt, NO_DEPOSIT, TGAS, FT_CONTRACT, ProgramInfo, FTMetadata};
 
 #[derive(Serialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -27,9 +27,14 @@ impl Contract {
         // TODO: Add check for existence
         // TODO: Ask money for storage deposit
 
+        // Better handle this
+        let user = env::predecessor_account_id();
+        let username= user.as_str().split('.').next().unwrap();
+
         // Assert the sub-account is valid
         let current_account = env::current_account_id().to_string();
-        let subaccount: AccountId = format!("{token_name}.{current_account}").parse().unwrap();
+        log!(format!("{username}.{current_account}"));
+        let subaccount: AccountId = format!("{username}.{current_account}").parse().unwrap();
 
         // Assert enough money is attached to create the account and deploy the contract
         let attached = env::attached_deposit();
@@ -42,9 +47,9 @@ impl Contract {
         );
 
         let init_args = near_sdk::serde_json::to_vec(&FungibleTokenInitArgs {
-            owner_id: env::predecessor_account_id(),
-            name: token_name,
-            symbol: token_symbol,
+            owner_id: user,
+            name: token_name.clone(),
+            symbol: token_symbol.clone(),
             total_supply: token_total_supply,
         }).unwrap();
 
@@ -71,6 +76,9 @@ impl Contract {
                 .create_factory_subaccount_and_deploy_callback(
                     subaccount,
                     env::predecessor_account_id(),
+                    token_name,
+                    token_symbol,
+                    token_total_supply,
                     attached,
                 ),
         )
@@ -81,6 +89,9 @@ impl Contract {
         &mut self,
         account: AccountId,
         user: AccountId,
+        token_name: String,
+        token_symbol: String,
+        token_total_supply: U128,
         attached: Balance,
         #[callback_result] create_deploy_result: Result<(), PromiseError>,
     ) -> bool {
@@ -93,7 +104,9 @@ impl Contract {
         }
         
         log!(format!("Correctly created and deployed to {account}"));
-        self.programs.insert(&user, &ProgramInfo { ft: account.clone(), manager: account });
+
+        let metadata = FTMetadata{account_id: account.clone(), token_name, token_total_supply: token_total_supply, token_symbol};
+        self.programs.insert(&user, &ProgramInfo { ft: metadata, manager: account });
 
         true
     }

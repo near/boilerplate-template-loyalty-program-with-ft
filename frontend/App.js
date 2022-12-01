@@ -4,46 +4,42 @@ import React from 'react';
 import './assets/global.css';
 
 import { SignOutButton } from './ui-components';
+import { FT } from './near-ft-token';
 
-export default function App({ isSignedIn, contract, wallet }) {
-  const [isInitialized, setIsInitialized] = React.useState(false);
+export default function App({ isSignedIn, factory, wallet, MERCHANT_ADDRESS }) {
+  const [programExists, setProgramExists] = React.useState(false);
   const [uiPleaseWait, setUiPleaseWait] = React.useState(true);
 
-  const [name, setName] = React.useState("");
-  const [symbol, setSymbol] = React.useState("");
-  const [totalSupply, setTotalSupply] = React.useState("");
-  const [errorMessage, setErrorMessage] = React.useState("");
+  const [ftContract, setFT] = React.useState("");
+  const [name, setName] = React.useState("Reward Token");
+  const [symbol, setSymbol] = React.useState("RT");
+  const [totalSupply, setTotalSupply] = React.useState("1000");
+  const [errorMessage, setErrorMessage] = React.useState("-");
 
-  // Get blockchian state once on component load
+  // Get blockchain state once on component load
   React.useEffect(() => {
-    contract
-      .isContractInitialized()
-      .then(setIsInitialized)
-      .catch(alert)
-      .finally(() => {
-         setUiPleaseWait(false);
-      });
+    async function start() {
+      const programExists = await factory.checkProgramExists(MERCHANT_ADDRESS)
+      setProgramExists(programExists)
+
+      if (programExists) {
+        const { ft } = await factory.getProgram(MERCHANT_ADDRESS)
+        const ftInterface = new FT({ contractId: ft, walletToUse: wallet })
+
+        const metadata = await ftInterface.getFungibleTokenMetadata()
+
+        setName(metadata.name);
+        setSymbol(metadata.symbol);
+
+        const totalSupply = await ftInterface.getTotalSupply()
+        setTotalSupply(totalSupply)
+      }
+      setUiPleaseWait(false);
+    }
+    start()
   }, []);
 
-  React.useEffect(() => {
-    if (isInitialized) {
-      contract
-        .getFungibleTokenMetadata()
-        .then((metadata) => {
-          setName(metadata.name);
-          setSymbol(metadata.symbol);
-        })
-        .then(() => {
-          contract.getTotalSupply().then((totalSupply) => setTotalSupply(totalSupply))
-        })
-        .catch(alert)
-        .finally(() => {
-          setUiPleaseWait(false);
-        });
-    }
-  }, [isInitialized]);
-
-  function createLoayltyToken(e) {
+  function createLoyaltyToken(e) {
     e.preventDefault();
 
     if (totalSupply <= 0) {
@@ -57,61 +53,62 @@ export default function App({ isSignedIn, contract, wallet }) {
 
     setUiPleaseWait(true);
 
-    contract
-    .createFungibleTokenPool(name, symbol, totalSupply)
-    .then(() => {
-      setIsInitialized(true);
-      contract.getFungibleTokenMetdata();
-    })
-    .catch(alert)
-    .finally(() => {
-      setUiPleaseWait(false);
-    })
+    factory
+      .createFungibleToken(symbol, totalSupply)
+      .then(() => {
+        setProgramExists(true);
+      })
+      .catch(alert)
+      .finally(() => {
+        setUiPleaseWait(false);
+      })
   }
 
+  function login(e) {
+    e.preventDefault();
+    wallet.signIn()
+  }
+  const disabled = (!isSignedIn || programExists)
+
   return (
-    
     <>
-    {isInitialized ?
-      <>
-        <main className={uiPleaseWait ? 'please-wait' : 'ftDetailsWrapper'}>
-          <h1>
-            Merchant view
-          </h1>
-          <div className='row'>
-            <div>Loyalty coin name: {name}</div>
-            <div>Logged-in wallet: {wallet.accountId}</div>
-          </div>
-          <div className="ftDetailsWrapper">
-            <div className='ftDetails'>{name}</div>
-            <div className='ftDetails'>{symbol}</div>
-            <div className='ftDetails'>{totalSupply}</div>
-          </div>
-        </main>
-      </>
-      :
-      <>
-        {isSignedIn &&
-          <SignOutButton accountId={wallet.accountId} onClick={() => wallet.signOut()} />
-        }
-        <main className={uiPleaseWait ? 'please-wait' : ''}>
-          <h1>
-            Merchant view
-          </h1>
-          <form onSubmit={createLoayltyToken} className="change">
-            <input required autoComplete="off" id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
-            <input required autoComplete="off" id="symbol" value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder="Symbol" />
-            <button className="walletButton" disabled={isSignedIn} onClick={() => wallet.signIn()}>{isSignedIn ? wallet.accountId : "Sign in with Near wallet"}</button>
-            <input required type="number" autoComplete="off" id="totalSupply" value={totalSupply} onChange={(e) => setTotalSupply(e.target.value)} placeholder="Total supply"/>
-            <button>
-              <span>Create Loyalty Token</span>
-              <div className="loader"></div>
-            </button>
-          </form>
-          <div className="error">{errorMessage}</div>
-        </main>
-      </>
-    }
+      <main className={uiPleaseWait ? 'please-wait' : ''}>
+        <h1>
+          Merchant view
+        </h1>
+        <form className="change">
+          {!programExists &&
+            <>
+            <p> There is no reward program, create one! </p>
+            </>
+          }
+          {(programExists || isSignedIn) &&
+            <>
+              <label htmlFor="name" > Loyalty Token </label>
+              <input required id="name" defaultValue={name} disabled={disabled} onChange={() => { }} />
+              <input required id="symbol" defaultValue={symbol} disabled={disabled} onChange={() => { }} />
+              <input required id="totalSupply" defaultValue={totalSupply} disabled={disabled} onChange={() => { }} />
+              <hr />
+            </>
+          }
+          {!disabled &&
+            <>
+              <button onClick={createLoyaltyToken}>
+                <span>Create Loyalty Token</span>
+                <div className="loader"></div>
+              </button>
+            </>
+          }
+          {isSignedIn ?
+            <SignOutButton className="walletButton" visible={isSignedIn} accountId={wallet.accountId} onClick={() => wallet.signOut()} />
+            :
+            <button className="walletButton" onClick={login}>{isSignedIn ? wallet.accountId : "Sign in with Near wallet"}</button>
+          }
+        </form>
+      </main>
+
+      <div className="error">{errorMessage}</div>
     </>
   );
 }
+

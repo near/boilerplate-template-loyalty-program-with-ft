@@ -7,7 +7,7 @@ const test = anyTest as TestFn<{
 }>;
 
 const MAX_GAS = "300000000000000";
-const FT_DEPOSIT = "19750000000000000000000000";
+const FT_DEPOSIT = "2220000000000000000000000";
 
 test.beforeEach(async (t) => {
   // Init the worker and start a Sandbox server
@@ -44,34 +44,39 @@ test("create_factory_subaccount_and_deploy tests", async (t) => {
     factory,
     "create_factory_subaccount_and_deploy",
     {
-      name: "ft",
-      ft_owner_id: merchant,
-      token_name: "Reward Token",
-      token_symbol: "RT",
+      token_name: "ft",
+      token_symbol: "ft",
       token_total_supply: "10000",
     },
     { gas: MAX_GAS, attachedDeposit: FT_DEPOSIT }
   );
 
-  t.is(create, true);
-  let is_initialized = await merchant.call(
-    factory,
-    "is_initialized",
-    {},
-    { gas: MAX_GAS, attachedDeposit: FT_DEPOSIT }
-  );
-  t.is(is_initialized, true);
+  t.true(create);
+
+  const has = await factory.view("user_has_program", { account_id: merchant.accountId })
+  t.true(has)
+
+  const hasNot = await factory.view("user_has_program", { account_id: "somebody.near" })
+  t.false(hasNot)
+
+  const program: Program = await factory.view("user_program", { account_id: merchant.accountId })
+  t.is(program.ft, `ft.${factory.accountId}`)
 });
 
-test("isInitialized for non deployed contracts", async (t) => {
-  const { factory, merchant } = t.context.accounts;
+interface Program {
+  ft: string
+  manager: string
+}
 
-  let is_initialized = await merchant.call(
-    factory,
-    "is_initialized",
-    {},
-    { gas: MAX_GAS, attachedDeposit: FT_DEPOSIT }
-  );
+// test("isInitialized for non deployed contracts", async (t) => {
+//   const { factory, merchant } = t.context.accounts;
 
-  t.is(is_initialized, false);
-});
+//   let is_initialized = await merchant.call(
+//     factory,
+//     "is_initialized",
+//     {},
+//     { gas: MAX_GAS, attachedDeposit: FT_DEPOSIT }
+//   );
+
+//   t.is(is_initialized, false);
+// });

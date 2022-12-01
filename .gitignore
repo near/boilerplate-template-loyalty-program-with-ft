@@ -8,12 +8,11 @@ node_modules
 # build
 /out
 /dist
-/contract/target
-/contract/neardev
-/frontend/dist
-/frontend/.parcel-cache
-/fungible-token/target
-/integration-tests/node_modules
+**/target
+**/neardev
+**/dist
+**/.parcel-cache
+**/node_modules
 
 # testing
 /coverage

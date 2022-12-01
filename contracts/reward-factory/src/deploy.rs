@@ -1,8 +1,9 @@
 use near_sdk::json_types::U128;
 use near_sdk::serde::Serialize;
 use near_sdk::{env, log, near_bindgen, AccountId, Balance, Promise, PromiseError, PublicKey};
+use near_sdk::env::STORAGE_PRICE_PER_BYTE;
 
-use crate::{Contract, ContractExt, NEAR_PER_STORAGE, NO_DEPOSIT, TGAS, FT_CONTRACT};
+use crate::{Contract, ContractExt, NO_DEPOSIT, TGAS, FT_CONTRACT, ProgramInfo};
 
 #[derive(Serialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -18,45 +19,41 @@ impl Contract {
     #[payable]
     pub fn create_factory_subaccount_and_deploy(
         &mut self,
-        name: String,
-        ft_owner_id: AccountId,
         token_name: String,
         token_symbol: String,
         token_total_supply: U128,
         public_key: Option<PublicKey>,
     ) -> Promise {
+        // TODO: Add check for existence
+        // TODO: Ask money for storage deposit
+
         // Assert the sub-account is valid
         let current_account = env::current_account_id().to_string();
-        let subaccount: AccountId = format!("{name}.{current_account}").parse().unwrap();
-        assert!(
-            env::is_valid_account_id(subaccount.as_bytes()),
-            "Invalid subaccount"
-        );
+        let subaccount: AccountId = format!("{token_name}.{current_account}").parse().unwrap();
 
         // Assert enough money is attached to create the account and deploy the contract
         let attached = env::attached_deposit();
 
         let contract_bytes = FT_CONTRACT.len() as u128;
-        let minimum_needed = NEAR_PER_STORAGE * contract_bytes;
+        let minimum_needed = STORAGE_PRICE_PER_BYTE * contract_bytes;
         assert!(
             attached >= minimum_needed,
             "Attach at least {minimum_needed} yⓃ"
         );
 
         let init_args = near_sdk::serde_json::to_vec(&FungibleTokenInitArgs {
-            owner_id: ft_owner_id,
+            owner_id: env::predecessor_account_id(),
             name: token_name,
             symbol: token_symbol,
             total_supply: token_total_supply,
-        })
-        .unwrap();
+        }).unwrap();
 
         let mut promise = Promise::new(subaccount.clone())
             .create_account()
             .transfer(attached)
             .deploy_contract(FT_CONTRACT.to_vec())
             .function_call(
-                "new_fungible_token_pool".to_owned(),
+                "new_default_meta".to_owned(),
                 init_args,
                 NO_DEPOSIT,
                 TGAS * 20,
@@ -87,20 +84,17 @@ impl Contract {
         attached: Balance,
         #[callback_result] create_deploy_result: Result<(), PromiseError>,
     ) -> bool {
-        if let Ok(_result) = create_deploy_result {
-            log!(format!("Correctly created and deployed to {account}"));
-            self.are_contracts_initialized = true;
-            return true;
-        };
+        if create_deploy_result.is_err(){
+            log!(format!(
+                "Error creating {account}, returning {attached}yⓃ to {user}"
+            ));
+            Promise::new(user).transfer(attached);
+            return false;
+        }
+        
+        log!(format!("Correctly created and deployed to {account}"));
+        self.programs.insert(&user, &ProgramInfo { ft: account.clone(), manager: account });
 
-        log!(format!(
-            "Error creating {account}, returning {attached}yⓃ to {user}"
-        ));
-        Promise::new(user).transfer(attached);
-        false
-    }
-
-    pub fn is_initialized(&self) -> bool {
-        self.are_contracts_initialized.into()
+        true
     }
 }

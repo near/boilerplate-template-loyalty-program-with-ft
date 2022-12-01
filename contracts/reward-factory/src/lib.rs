@@ -1,5 +1,6 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::UnorderedMap;
+use near_sdk::json_types::U128;
 use near_sdk::serde::Serialize;
 use near_sdk::{near_bindgen, AccountId, Balance, Gas};
 
@@ -11,9 +12,18 @@ const NO_DEPOSIT: Balance = 0;
 
 #[derive(BorshSerialize, BorshDeserialize, Serialize)]
 #[serde(crate = "near_sdk::serde")]
+pub struct FTMetadata {
+    account_id: AccountId,
+    token_name: String,
+    token_symbol: String,
+    token_total_supply: U128,
+}
+
+#[derive(BorshSerialize, BorshDeserialize, Serialize)]
+#[serde(crate = "near_sdk::serde")]
 pub struct ProgramInfo {
-    ft: AccountId,
-    manager: AccountId,
+    ft: FTMetadata,
+    manager: AccountId, // TO BE DONE
 }
 
 #[near_bindgen]

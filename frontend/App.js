@@ -4,7 +4,6 @@ import React from 'react';
 import './assets/global.css';
 
 import { SignOutButton } from './ui-components';
-import { FT } from './near-ft-token';
 
 export default function App({ isSignedIn, factory, wallet, MERCHANT_ADDRESS }) {
   const [programExists, setProgramExists] = React.useState(false);
@@ -29,22 +28,46 @@ export default function App({ isSignedIn, factory, wallet, MERCHANT_ADDRESS }) {
 
       setUiPleaseWait(false);
     }
-    start()
+    start();
   }, []);
 
+  React.useEffect(() => {
+    if (programExists) { 
+      setUiPleaseWait(true);
+      factory.getProgram(MERCHANT_ADDRESS)
+        .then(metadata => setFTMeta(metadata))
+        .finally(() => setUiPleaseWait(false))
+    }
+  }, [programExists]);
+
   function createLoyaltyToken(e) {
-    if (Number(totalSupply) <= 0) {
-      return setErrorMessage("Total supply should be > 0");
+
+    if (totalSupply <= 0) {
+      setErrorMessage("Total supply should be > 0");
+      return;
+    }
+    
+    if (!isSignedIn) {
+      setErrorMessage("Sign in to a Near wallet before creating a loyalty token");
+      return;
     }
 
     setUiPleaseWait(true);
 
     factory.createFungibleToken(name, symbol, totalSupply)
+      .then(() => {
+        factory.checkProgramExists(MERCHANT_ADDRESS)
+        .then((programExists) => setProgramExists(programExists));
+      })
+      .catch(alert)
+      .finally(() => {
+        setUiPleaseWait(false);
+      });
   }
 
   return (
-    <>
-      <div className={uiPleaseWait ? 'please-wait' : '', 'container'}>
+    <div className='main'>
+      <div className={uiPleaseWait ? 'please-wait' : 'container'}>
         <h1>
           Merchant view
         </h1>
@@ -86,7 +109,8 @@ export default function App({ isSignedIn, factory, wallet, MERCHANT_ADDRESS }) {
       </div>
 
       <div className="error">{errorMessage}</div>
-    </>
+
+    </div>
   );
 }
 

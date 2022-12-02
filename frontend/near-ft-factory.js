@@ -24,10 +24,10 @@ export class Factory {
   }
 
   async checkProgramExists(account_id) {
-    return this.wallet.viewMethod({ contractId: this.contractId, method: 'user_has_program', args: { account_id } })
+    return await this.wallet.viewMethod({ contractId: this.contractId, method: 'user_has_program', args: { account_id } })
   }
 
   async getProgram(account_id) {
-    return this.wallet.viewMethod({ contractId: this.contractId, method: 'user_program', args: { account_id } })
+    return await this.wallet.viewMethod({ contractId: this.contractId, method: 'user_program', args: { account_id } })
   }
 }

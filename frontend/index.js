@@ -8,7 +8,7 @@ import { Factory } from './near-ft-factory';
 import { Wallet } from './near-wallet';
 
 const FACTORY_ADDRESS = process.env.CONTRACT_NAME
-const MERCHANT_ADDRESS = "named-account.testnet" // this is needed for user view
+const MERCHANT_ADDRESS = "mk-ft.testnet" // this is needed for user view
 
 // Factory: Address => FT Address
 

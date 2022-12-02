@@ -6,7 +6,7 @@
     "start": "cd frontend && npm run start",
     "dev": "cd frontend && npm run dev",
     "deploy": "cd contracts && ./deploy.sh",
-    "build": "npm run build:ft && npm run build:contracts && npm run build:frontend",
+    "build": "npm run build:contracts && npm run build:frontend",
     "build:frontend": "cd frontend && npm run build",
     "build:contracts": "cd contracts && ./build.sh",
     "build:ft": "cd fungible-token && ./build.sh",

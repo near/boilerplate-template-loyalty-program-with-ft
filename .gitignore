@@ -8,9 +8,11 @@ node_modules
 # build
 /out
 /dist
-
-# keys
-/templates/react/neardev
+**/target
+**/neardev
+**/dist
+**/.parcel-cache
+**/node_modules
 
 # testing
 /coverage

@@ -3,64 +3,114 @@ import React from 'react';
 
 import './assets/global.css';
 
-import { EducationalText, SignInPrompt, SignOutButton } from './ui-components';
+import { SignOutButton } from './ui-components';
 
-export default function App({ isSignedIn, helloNEAR, wallet }) {
-  const [valueFromBlockchain, setValueFromBlockchain] = React.useState();
-
+export default function App({ isSignedIn, factory, wallet, MERCHANT_ADDRESS }) {
+  const [programExists, setProgramExists] = React.useState(false);
   const [uiPleaseWait, setUiPleaseWait] = React.useState(true);
 
-  // Get blockchian state once on component load
+  const [ftMetadata, setFTMeta] = React.useState({});
+  const [name, setName] = React.useState("");
+  const [symbol, setSymbol] = React.useState("");
+  const [totalSupply, setTotalSupply] = React.useState("");
+  const [errorMessage, setErrorMessage] = React.useState("");
+
+  // Get blockchain state once on component load
   React.useEffect(() => {
-    helloNEAR
-      .getGreeting()
-      .then(setValueFromBlockchain)
-      .catch(alert)
-      .finally(() => {
-        setUiPleaseWait(false);
-      });
+    async function start() {
+      const programExists = await factory.checkProgramExists(MERCHANT_ADDRESS)
+      setProgramExists(programExists)
+
+      if (programExists) {
+        const { ft } = await factory.getProgram(MERCHANT_ADDRESS)
+        setFTMeta(ft);
+      }
+
+      setUiPleaseWait(false);
+    }
+    start();
   }, []);
 
-  /// If user not signed-in with wallet - show prompt
-  if (!isSignedIn) {
-    // Sign-in flow will reload the page later
-    return <SignInPrompt greeting={valueFromBlockchain} onClick={() => wallet.signIn()} />;
-  }
+  React.useEffect(() => {
+    if (programExists) { 
+      setUiPleaseWait(true);
+      factory.getProgram(MERCHANT_ADDRESS)
+        .then(metadata => setFTMeta(metadata))
+        .finally(() => setUiPleaseWait(false))
+    }
+  }, [programExists]);
 
-  function changeGreeting(e) {
-    e.preventDefault();
+  function createLoyaltyToken(e) {
+
+    if (totalSupply <= 0) {
+      setErrorMessage("Total supply should be > 0");
+      return;
+    }
+    
+    if (!isSignedIn) {
+      setErrorMessage("Sign in to a Near wallet before creating a loyalty token");
+      return;
+    }
+
     setUiPleaseWait(true);
-    const { greetingInput } = e.target.elements;
-    helloNEAR
-      .setGreeting(greetingInput.value)
-      .then(async () => {
-        return helloNEAR.getGreeting();
+
+    factory.createFungibleToken(name, symbol, totalSupply)
+      .then(() => {
+        factory.checkProgramExists(MERCHANT_ADDRESS)
+        .then((programExists) => setProgramExists(programExists));
       })
-      .then(setValueFromBlockchain)
+      .catch(alert)
       .finally(() => {
         setUiPleaseWait(false);
       });
   }
 
   return (
-    <>
-      <SignOutButton accountId={wallet.accountId} onClick={() => wallet.signOut()} />
-      <main className={uiPleaseWait ? 'please-wait' : ''}>
+    <div className='main'>
+      <div className={uiPleaseWait ? 'please-wait' : 'container'}>
         <h1>
-          The contract says: <span className="greeting">{valueFromBlockchain}</span>
+          Merchant view
         </h1>
-        <form onSubmit={changeGreeting} className="change">
-          <label>Change greeting:</label>
-          <div>
-            <input autoComplete="off" defaultValue={valueFromBlockchain} id="greetingInput" />
-            <button>
-              <span>Save</span>
-              <div className="loader"></div>
-            </button>
-          </div>
-        </form>
-        <EducationalText />
-      </main>
-    </>
+        <div className="change">
+          { isSignedIn && programExists &&
+            <>
+              <p> Here is your program data</p>
+
+              <div className="ftDetailsWrapper">
+                Account: <div className='ftDetails'>{ftMetadata.account_id}</div>
+                Name: <div className='ftDetails'>{ftMetadata.token_name}</div>
+                Symbol: <div className='ftDetails'>{ftMetadata.token_symbol}</div>
+                Total Supply: <div className='ftDetails'>{ftMetadata.token_total_supply}</div>
+              </div>
+              <hr />
+            </>
+          }
+          { isSignedIn && !programExists &&
+            <>
+              <p> There is no reward program, create one! </p>
+
+              <label htmlFor="name" > Loyalty Token </label>
+              <input required id="name" placeholder="Name (e.g. Loyalty Token)" onChange={(e) => setName(e.target.value)}/>
+              <input required id="symbol"  placeholder="Symbol (e.g. LT)" onChange={(e) => setSymbol(e.target.value)} />
+              <input required id="totalSupply" placeholder="Total Supply (e.g. 1000)" onChange={(e) => setTotalSupply(e.target.value)}/>
+              <button className='btn btn-primary' onClick={createLoyaltyToken}>
+                <span>Create Loyalty Token</span>
+                <div className="loader"></div>
+              </button>
+              <hr />
+            </>
+          }
+          {isSignedIn ?
+            <SignOutButton className="btn btn-primary" accountId={wallet.accountId} onClick={() => wallet.signOut()} />
+            :
+            <button className="btn btn-primary" onClick={()=>{wallet.signIn()}}>Sign in with NEAR</button>
+          }
+        </div>
+      </div>
+
+      <div className="error">{errorMessage}</div>
+
+    </div>
   );
 }
+

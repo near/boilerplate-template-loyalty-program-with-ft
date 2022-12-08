@@ -55,6 +55,8 @@ impl Contract {
             "Attach at least {minimum_needed} yⓃ"
         );
 
+        let attached_for_manager = attached /2;
+
         let ft_init_args = near_sdk::serde_json::to_vec(&FungibleTokenInitArgs {
             owner_id: user,
             name: token_name.clone(),
@@ -64,7 +66,7 @@ impl Contract {
 
         let mut ft_promise = Promise::new(ft_subaccount.clone())
             .create_account()
-            .transfer(attached)
+            .transfer(attached - attached_for_manager)
             .deploy_contract(FT_CONTRACT.to_vec())
             .function_call(
                 "new_default_meta".to_owned(),
@@ -79,7 +81,7 @@ impl Contract {
     
         let mut manager_promise = Promise::new(manager_subaccount.clone())
             .create_account()
-            // .transfer(attached) //TODO
+            .transfer(attached_for_manager)
             .deploy_contract(MANAGER_CONTRACT.to_vec())
             .function_call(
                 "initialize".to_owned(),

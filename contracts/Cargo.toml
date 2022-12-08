@@ -8,7 +8,7 @@ overflow-checks = true
 
 [workspace]
 members = [
-    "reward-factory",
+    "manager-contract",
     "fungible-token",
-    "manager-contract"
+    "reward-factory",
 ]

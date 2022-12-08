@@ -9,7 +9,7 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::UnorderedSet;
 use near_sdk::serde::Serialize;
 use near_sdk::serde_json::json;
-use near_sdk::{env, log, Gas, near_bindgen, AccountId, Balance, Promise, PromiseError, PublicKey};
+use near_sdk::{env, log, Gas, near_bindgen, AccountId, Balance, Promise, PromiseError, PublicKey, PanicOnDefault};
 use near_sdk::json_types::U128;
 
 
@@ -30,7 +30,7 @@ struct FungibleTokenTransferArgs {
 }
 
 #[near_bindgen]
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Contract {
     pub subaccounts: UnorderedSet<String>, //storing prefixes is enough
     pub ft_contract: AccountId,
@@ -155,6 +155,14 @@ mod tests {
             .signer_account_id(predecessor_account_id.clone())
             .predecessor_account_id(predecessor_account_id);
         builder
+    }
+
+    #[test]
+    #[should_panic(expected = "The contract is not initialized")]
+    fn test_default() {
+        let context = get_context(accounts(1));
+        testing_env!(context.build());
+        let _contract = Contract::default();
     }
 
     #[test]

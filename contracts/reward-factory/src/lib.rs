@@ -6,7 +6,8 @@ use near_sdk::{near_bindgen, AccountId, Balance, Gas};
 
 mod deploy;
 
-const FT_CONTRACT: &[u8] = include_bytes!("../../fungible-token/res/fungible_token.wasm");
+const FT_CONTRACT: &[u8] = include_bytes!("../../res/fungible_token.wasm");
+const MANAGER_CONTRACT: &[u8] = include_bytes!("../../res/manager_contract.wasm");
 const TGAS: Gas = Gas(10u64.pow(12));
 const NO_DEPOSIT: Balance = 0;
 
@@ -23,7 +24,7 @@ pub struct FTMetadata {
 #[serde(crate = "near_sdk::serde")]
 pub struct ProgramInfo {
     ft: FTMetadata,
-    manager: AccountId, // TO BE DONE
+    manager: AccountId,
 }
 
 #[near_bindgen]

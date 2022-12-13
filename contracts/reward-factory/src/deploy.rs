@@ -3,7 +3,7 @@ use near_sdk::serde::Serialize;
 use near_sdk::{env, log, near_bindgen, AccountId, Balance, Promise, PromiseError, PublicKey};
 use near_sdk::env::STORAGE_PRICE_PER_BYTE;
 
-use crate::{Contract, ContractExt, NO_DEPOSIT, TGAS, FT_CONTRACT, ProgramInfo, FTMetadata};
+use crate::{Contract, ContractExt, NO_DEPOSIT, TGAS, FT_CONTRACT, ProgramInfo, FTMetadata, MANAGER_CONTRACT};
 
 #[derive(Serialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -12,6 +12,12 @@ struct FungibleTokenInitArgs {
     name: String,
     symbol: String,
     total_supply: U128,
+}
+
+#[derive(Serialize)]
+#[serde(crate = "near_sdk::serde")]
+struct ManagerContractInitArgs {
+    ft_contract: AccountId,
 }
 
 #[near_bindgen]
@@ -34,47 +40,69 @@ impl Contract {
         // Assert the sub-account is valid
         let current_account = env::current_account_id().to_string();
         log!(format!("{username}.{current_account}"));
-        let subaccount: AccountId = format!("{username}.{current_account}").parse().unwrap();
+        let ft_subaccount: AccountId = format!("{username}-ft.{current_account}").parse().unwrap();
+        let manager_subaccount: AccountId = format!("{username}-manager.{current_account}").parse().unwrap();
+
 
         // Assert enough money is attached to create the account and deploy the contract
         let attached = env::attached_deposit();
 
-        let contract_bytes = FT_CONTRACT.len() as u128;
-        let minimum_needed = STORAGE_PRICE_PER_BYTE * contract_bytes;
+        let ft_contract_bytes = FT_CONTRACT.len() as u128;
+        let manager_contract_bytes = MANAGER_CONTRACT.len() as u128;
+        let minimum_needed = STORAGE_PRICE_PER_BYTE * (ft_contract_bytes + manager_contract_bytes);
         assert!(
             attached >= minimum_needed,
             "Attach at least {minimum_needed} yⓃ"
         );
 
-        let init_args = near_sdk::serde_json::to_vec(&FungibleTokenInitArgs {
+        let attached_for_manager = attached /2;
+
+        let ft_init_args = near_sdk::serde_json::to_vec(&FungibleTokenInitArgs {
             owner_id: user,
             name: token_name.clone(),
             symbol: token_symbol.clone(),
             total_supply: token_total_supply,
         }).unwrap();
 
-        let mut promise = Promise::new(subaccount.clone())
+        let mut ft_promise = Promise::new(ft_subaccount.clone())
             .create_account()
-            .transfer(attached)
+            .transfer(attached - attached_for_manager)
             .deploy_contract(FT_CONTRACT.to_vec())
             .function_call(
                 "new_default_meta".to_owned(),
-                init_args,
+                ft_init_args,
+                NO_DEPOSIT,
+                TGAS * 20,
+            );
+
+        let manager_init_args = near_sdk::serde_json::to_vec(&ManagerContractInitArgs {
+            ft_contract: ft_subaccount.clone(),
+        }).unwrap();
+    
+        let mut manager_promise = Promise::new(manager_subaccount.clone())
+            .create_account()
+            .transfer(attached_for_manager)
+            .deploy_contract(MANAGER_CONTRACT.to_vec())
+            .function_call(
+                "initialize".to_owned(),
+                manager_init_args,
                 NO_DEPOSIT,
                 TGAS * 20,
             );
 
         // Add full access key is the user passes one
         if let Some(pk) = public_key {
-            promise = promise.add_full_access_key(pk);
+            ft_promise = ft_promise.add_full_access_key(pk.clone());
+            manager_promise = manager_promise.add_full_access_key(pk);
         }
 
         // Add callback
-        promise.then(
+        ft_promise.and(manager_promise).then(
             Self::ext(env::current_account_id())
                 .with_static_gas(TGAS * 5)
                 .create_factory_subaccount_and_deploy_callback(
-                    subaccount,
+                    ft_subaccount.clone(),
+                    manager_subaccount.clone(),
                     env::predecessor_account_id(),
                     token_name,
                     token_symbol,
@@ -87,7 +115,8 @@ impl Contract {
     #[private]
     pub fn create_factory_subaccount_and_deploy_callback(
         &mut self,
-        account: AccountId,
+        ft_account: AccountId,
+        manager_account: AccountId,
         user: AccountId,
         token_name: String,
         token_symbol: String,
@@ -97,16 +126,16 @@ impl Contract {
     ) -> bool {
         if create_deploy_result.is_err(){
             log!(format!(
-                "Error creating {account}, returning {attached}yⓃ to {user}"
+                "Error creating {ft_account}, returning {attached}yⓃ to {user}"
             ));
             Promise::new(user).transfer(attached);
             return false;
         }
         
-        log!(format!("Correctly created and deployed to {account}"));
+        log!(format!("Correctly created and deployed to {ft_account} and {manager_account}"));
 
-        let metadata = FTMetadata{account_id: account.clone(), token_name, token_total_supply: token_total_supply, token_symbol};
-        self.programs.insert(&user, &ProgramInfo { ft: metadata, manager: account });
+        let metadata = FTMetadata{account_id: ft_account.clone(), token_name, token_total_supply: token_total_supply, token_symbol};
+        self.programs.insert(&user, &ProgramInfo { ft: metadata, manager: manager_account });
 
         true
     }

@@ -1,6 +1,6 @@
 /* Interface to talk with the contract factory */
 const MAX_TGAS = '300000000000000';
-const DEPOSIT = '2220000000000000000000000';
+const DEPOSIT = '7770000000000000000000000';
 const FT_CONTRACT_NAME = "ft";
 
 export class Factory {

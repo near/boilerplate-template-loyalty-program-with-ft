@@ -1,5 +1,8 @@
 import { Worker, NearAccount, NEAR } from "near-workspaces";
 import anyTest, { TestFn } from "ava";
+import { Near } from "near-api-js";
+const { utils, keyStore } = require("near-api-js");
+
 
 const test = anyTest as TestFn<{
   worker: Worker;
@@ -7,7 +10,7 @@ const test = anyTest as TestFn<{
 }>;
 
 const MAX_GAS = "300000000000000";
-const FT_DEPOSIT = "2220000000000000000000000";
+const TOTAL_DEPOSIT = "4989140000000000000000000";
 
 test.beforeEach(async (t) => {
   // Init the worker and start a Sandbox server
@@ -48,7 +51,7 @@ test("create_factory_subaccount_and_deploy tests", async (t) => {
       token_symbol: "ft",
       token_total_supply: "10000",
     },
-    { gas: MAX_GAS, attachedDeposit: FT_DEPOSIT }
+    { gas: MAX_GAS, attachedDeposit: TOTAL_DEPOSIT }
   );
 
   t.true(create);
@@ -60,7 +63,7 @@ test("create_factory_subaccount_and_deploy tests", async (t) => {
   t.false(hasNot)
 
   const program: Program = await factory.view("user_program", { account_id: merchant.accountId })
-  t.is(program.ft.account_id, `ft.${factory.accountId}`)
+  t.is(program.ft.account_id, `merchant-ft.${factory.accountId}`)
 });
 
 interface FTMetadata {
@@ -75,16 +78,3 @@ interface Program {
   ft: FTMetadata
   manager: string
 }
-
-// test("isInitialized for non deployed contracts", async (t) => {
-//   const { factory, merchant } = t.context.accounts;
-
-//   let is_initialized = await merchant.call(
-//     factory,
-//     "is_initialized",
-//     {},
-//     { gas: MAX_GAS, attachedDeposit: FT_DEPOSIT }
-//   );
-
-//   t.is(is_initialized, false);
-// });

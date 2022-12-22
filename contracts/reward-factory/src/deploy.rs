@@ -1,9 +1,11 @@
+use near_sdk::env::STORAGE_PRICE_PER_BYTE;
 use near_sdk::json_types::U128;
 use near_sdk::serde::Serialize;
-use near_sdk::{env, log, near_bindgen, AccountId, Balance, Promise, PromiseError, PublicKey};
-use near_sdk::env::STORAGE_PRICE_PER_BYTE;
+use near_sdk::{env, log, near_bindgen, AccountId, Balance, Promise, PromiseError, PublicKey, ONE_NEAR};
 
-use crate::{Contract, ContractExt, NO_DEPOSIT, TGAS, FT_CONTRACT, ProgramInfo, FTMetadata, MANAGER_CONTRACT};
+use crate::{
+    Contract, ContractExt, FTMetadata, ProgramInfo, FT_CONTRACT, MANAGER_CONTRACT, NO_DEPOSIT, TGAS,
+};
 
 #[derive(Serialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -20,6 +22,8 @@ struct ManagerContractInitArgs {
     ft_contract: AccountId,
 }
 
+const EXTRA_BYTES: u128 = 10000;
+
 #[near_bindgen]
 impl Contract {
     #[payable]
@@ -35,38 +39,41 @@ impl Contract {
 
         // Better handle this
         let user = env::predecessor_account_id();
-        let username= user.as_str().split('.').next().unwrap();
+        let username = user.as_str().split('.').next().unwrap();
 
         // Assert the sub-account is valid
         let current_account = env::current_account_id().to_string();
-        log!(format!("{username}.{current_account}"));
         let ft_subaccount: AccountId = format!("{username}-ft.{current_account}").parse().unwrap();
-        let manager_subaccount: AccountId = format!("{username}-manager.{current_account}").parse().unwrap();
-
+        let manager_subaccount: AccountId = format!("{username}-manager.{current_account}")
+            .parse()
+            .unwrap();
 
         // Assert enough money is attached to create the account and deploy the contract
         let attached = env::attached_deposit();
 
-        let ft_contract_bytes = FT_CONTRACT.len() as u128;
-        let manager_contract_bytes = MANAGER_CONTRACT.len() as u128;
-        let minimum_needed = STORAGE_PRICE_PER_BYTE * (ft_contract_bytes + manager_contract_bytes);
+        let ft_minimum = (EXTRA_BYTES + FT_CONTRACT.len() as u128) * STORAGE_PRICE_PER_BYTE;
+
+        let manager_minimum =
+            (EXTRA_BYTES + MANAGER_CONTRACT.len() as u128 + 64 * 256) * STORAGE_PRICE_PER_BYTE + ONE_NEAR;
+
+        let minimum_attachment = ft_minimum + manager_minimum;
+
         assert!(
-            attached >= minimum_needed,
-            "Attach at least {minimum_needed} yⓃ"
+            attached >= minimum_attachment,
+            "Attach at least {minimum_attachment} yⓃ"
         );
 
-        let attached_for_manager = attached /2;
-
         let ft_init_args = near_sdk::serde_json::to_vec(&FungibleTokenInitArgs {
-            owner_id: user,
+            owner_id: manager_subaccount.clone(),
             name: token_name.clone(),
             symbol: token_symbol.clone(),
             total_supply: token_total_supply,
-        }).unwrap();
+        })
+        .unwrap();
 
         let mut ft_promise = Promise::new(ft_subaccount.clone())
             .create_account()
-            .transfer(attached - attached_for_manager)
+            .transfer(ft_minimum)
             .deploy_contract(FT_CONTRACT.to_vec())
             .function_call(
                 "new_default_meta".to_owned(),
@@ -77,11 +84,12 @@ impl Contract {
 
         let manager_init_args = near_sdk::serde_json::to_vec(&ManagerContractInitArgs {
             ft_contract: ft_subaccount.clone(),
-        }).unwrap();
-    
+        })
+        .unwrap();
+
         let mut manager_promise = Promise::new(manager_subaccount.clone())
             .create_account()
-            .transfer(attached_for_manager)
+            .transfer(manager_minimum)
             .deploy_contract(MANAGER_CONTRACT.to_vec())
             .function_call(
                 "initialize".to_owned(),
@@ -124,18 +132,31 @@ impl Contract {
         attached: Balance,
         #[callback_result] create_deploy_result: Result<(), PromiseError>,
     ) -> bool {
-        if create_deploy_result.is_err(){
+        if create_deploy_result.is_err() {
             log!(format!(
                 "Error creating {ft_account}, returning {attached}yⓃ to {user}"
             ));
             Promise::new(user).transfer(attached);
             return false;
         }
-        
-        log!(format!("Correctly created and deployed to {ft_account} and {manager_account}"));
 
-        let metadata = FTMetadata{account_id: ft_account.clone(), token_name, token_total_supply: token_total_supply, token_symbol};
-        self.programs.insert(&user, &ProgramInfo { ft: metadata, manager: manager_account });
+        log!(format!(
+            "Correctly created and deployed to {ft_account} and {manager_account}"
+        ));
+
+        let metadata = FTMetadata {
+            account_id: ft_account.clone(),
+            token_name,
+            token_total_supply: token_total_supply,
+            token_symbol,
+        };
+        self.programs.insert(
+            &user,
+            &ProgramInfo {
+                ft: metadata,
+                manager: manager_account,
+            },
+        );
 
         true
     }

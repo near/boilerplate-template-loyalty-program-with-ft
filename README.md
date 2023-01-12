@@ -7,7 +7,6 @@
     </picture>
   </a>
 </h1>
-
 <div align="center">
   Rust Boilerplate Template
   <br />
@@ -35,6 +34,10 @@
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+- [Overview](#overview)
+  - [Contracts](#contracts)
+  - [Frontend](#frontend)
+  - [Backend.js](#backendjs)
 - [Usage](#usage)
 - [Roadmap](#roadmap)
 - [Support](#support)
@@ -47,13 +50,16 @@
 
 ---
 
+# Loyalty Program with Fungible Tokens
+
+
 ## About
 
-This project is created for easy-to-start as a React + Rust skeleton template in the Pagoda Gallery. It was initialized with [create-near-app]. Clone it and start to build your own gallery project!
+This project is created for easy-to-start as a React + Rust loyalty program with fungible tokens template in the Pagoda Gallery. It was initialized with [create-near-app]. Use this template and start to build your own gallery project!
 
 ### Built With
 
-[create-near-app], [amazing-github-template](https://github.com/dec0dOS/amazing-github-template)
+[create-near-app]
 
 Getting Started
 ==================
@@ -76,138 +82,83 @@ Build your contract:
 
     npm run build
 
+
 Deploy your contract to TestNet with a temporary dev account:
 
     npm run deploy
+
+**Important note**: only the factory contract is and should be deployed. Two other contracts (fungible-token contract and manager contract)
+should only be deployed by the factory contract. This is done automatically when using `npm run deploy` command.
+
+Overview
+================
+
+The loyalty program with the fungible token template provides a way for merchants to create
+a fungible token program with just a few clicks. 
+
+The template consists of the following modules:
+
+* 3 smart contracts: factory contract, fungible token contract and manager contract
+* backend.js that serves as a web2 backend
+* frontend that provides the UI for the customer and the merchant
+
+
+## Contracts
+
+This template features three smart contracts:
+
+* factory contract - this is the contract that is deployed by the user. The contract uses a factory pattern
+  to deploy fungible token contract and manager contract for each merchant that logs in and creates a loyalty program with the UI.
+  See [factory-rust](https://github.com/near-examples/factory-rust) for a simple factory pattern.
+* fungible token contract - this is a standard fungible token contract. 
+  Read more about the FTs [here](https://docs.near.org/develop/relevant-contracts/ft).
+* manager contract - this contract manages the whole loaylty program flow
+
+## Frontend
+
+Frontend consists of two views:
+
+* merchant view - this is the view where a merchant can create a loyalty program. The merchant needs to log in first.
+* customer view - the view used by the customer to use the loyalty program and gain fungible tokens.
+  This view is hidden until a merchant creates a loaylty program. The customer does not have to log in or create an account
+  in order to use the loyalty program. 
+
+## Backend.js
+
+Backend.js is a simple web2 backend simulated on the frontend in this template.
 
 
 Usage
 =====
 
+Put the merchant name without the network suffix in the `.env.local` file 
+in the `frontend` folder (see `frontend/.env.local.exmaple` file). Here is an example for a merchant account `awesome-merchant.testnet`:
+
+  MERCHANT_ID=awesome-merchant
+
+**Important note**: MERCHANT_ID is **not** the account that deploys the factory contract. MERCHANT_ID is the account name of a merchant that
+creates the loaylty program using the UI.
+
+Start your frontend:
+
+    npm run build:web & npm start
+
 Test your contract:
 
     npm test
 
-Start your frontend:
-
-    npm start
-
 Exploring The Code
 ==================
 
-1. The smart-contract code lives in the `/contract` folder. See the README there for
-   more info. In blockchain apps the smart contract is the "backend" of your app.
+1. The smart-contract code lives in the `/contracts` folder.
 2. The frontend code lives in the `/frontend` folder. `/frontend/index.html` is a great
    place to start exploring. Note that it loads in `/frontend/index.js`,
    this is your entrypoint to learn how the frontend connects to the NEAR blockchain.
-3. Test your contract: `npm test`, this will run the tests in `integration-tests` directory.
-
-
-Deploy
-======
-
-Every smart contract in NEAR has its [own associated account][NEAR accounts].
-When you run `npm run deploy`, your smart contract gets deployed to the live NEAR TestNet with a temporary dev account.
-When you're ready to make it permanent, here's how:
-
-
-Step 0: Install near-cli (optional)
--------------------------------------
-
-[near-cli] is a command line interface (CLI) for interacting with the NEAR blockchain. It was installed to the local `node_modules` folder when you ran `npm install`, but for best ergonomics you may want to install it globally:
-
-    npm install --global near-cli
-
-Or, if you'd rather use the locally-installed version, you can prefix all `near` commands with `npx`
-
-Ensure that it's installed with `near --version` (or `npx near --version`)
-
-
-Step 1: Create an account for the contract
-------------------------------------------
-
-Each account on NEAR can have at most one contract deployed to it. If you've already created an account such as `your-name.testnet`, you can deploy your contract to `near-blank-project.your-name.testnet`. Assuming you've already created an account on [NEAR Wallet], here's how to create `near-blank-project.your-name.testnet`:
-
-1. Authorize NEAR CLI, following the commands it gives you:
-
-      near login
-
-2. Create a subaccount (replace `YOUR-NAME` below with your actual account name):
-
-      near create-account near-blank-project.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
-
-Step 2: deploy the contract
----------------------------
-
-Use the CLI to deploy the contract to TestNet with your account ID.
-Replace `PATH_TO_WASM_FILE` with the `wasm` that was generated in `contract` build directory.
-
-    near deploy --accountId near-blank-project.YOUR-NAME.testnet --wasmFile PATH_TO_WASM_FILE
-
-
-Step 3: set contract name in your frontend code
------------------------------------------------
-
-Modify the line in `src/config.js` that sets the account name of the contract. Set it to the account id you used above.
-
-    const CONTRACT_NAME = process.env.CONTRACT_NAME || 'near-blank-project.YOUR-NAME.testnet'
-
-
-
-Troubleshooting
-===============
-
-On Windows, if you're seeing an error containing `EPERM` it may be related to spaces in your path. Please see [this issue](https://github.com/zkat/npx/issues/209) for more details.
-
-
-  [create-near-app]: https://github.com/near/create-near-app
-  [Node.js]: https://nodejs.org/en/download/package-manager/
-  [jest]: https://jestjs.io/
-  [NEAR accounts]: https://docs.near.org/concepts/basics/account
-  [NEAR Wallet]: https://wallet.testnet.near.org/
-  [near-cli]: https://github.com/near/near-cli
-  [gh-pages]: https://github.com/tschaub/gh-pages
-
-## Roadmap
-
-See the [open issues](https://github.com/near/boilerplate-template-rs/issues) for a list of proposed features (and known issues).
-
-- [Top Feature Requests](https://github.com/near/boilerplate-template-rs/issues?q=label%3Aenhancement+is%3Aopen+sort%3Areactions-%2B1-desc) (Add your votes using the 👍 reaction)
-- [Top Bugs](https://github.com/near/boilerplate-template-rs/issues?q=is%3Aissue+is%3Aopen+label%3Abug+sort%3Areactions-%2B1-desc) (Add your votes using the 👍 reaction)
-- [Newest Bugs](https://github.com/near/boilerplate-template-rs/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
-
-## Support
-
-Reach out to the maintainer:
-
-- [GitHub issues](https://github.com/near/boilerplate-template-rs/issues/new?assignees=&labels=question&template=04_SUPPORT_QUESTION.md&title=support%3A+)
-
-## Project assistance
-
-If you want to say **thank you** or/and support active development of Rust Boilerplate Template:
-
-- Add a [GitHub Star](https://github.com/near/boilerplate-template-rs) to the project.
-- Tweet about the Rust Boilerplate Template.
-- Write interesting articles about the project on [Dev.to](https://dev.to/), [Medium](https://medium.com/) or your personal blog.
-
-Together, we can make Rust Boilerplate Template **better**!
-
-## Contributing
-
-First off, thanks for taking the time to contribute! Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make will benefit everybody else and are **greatly appreciated**.
-
-
-Please read [our contribution guidelines](docs/CONTRIBUTING.md), and thank you for being involved!
-
-## Authors & contributors
-
-The original setup of this repository is by [Dmitriy Sheleg](https://github.com/shelegdmitriy).
-
-For a full list of all authors and contributors, see [the contributors page](https://github.com/near/boilerplate-template-rs/contributors).
+3. There is a backend code in the `backend.js` file in the `frontend` directory. This code
+   simulates a web2 backend.
+4. Test your contract: `npm test`, this will run the tests in `integration-tests` directory.
 
 ## Security
 
-Rust Boilerplate Template follows good practices of security, but 100% security cannot be assured.
-Rust Boilerplate Template is provided **"as is"** without any **warranty**. Use at your own risk.
-
-_For more information and to report security issues, please refer to our [security documentation](docs/SECURITY.md)._
+Loyalty Program with Fungible Tokens Template follows good practices of security, but 100% security cannot be assured.
+Loyalty Program with Fungible Tokens Template is provided **"as is"** without any **warranty**. Use at your own risk.

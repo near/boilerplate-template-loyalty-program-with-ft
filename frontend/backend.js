@@ -1,10 +1,12 @@
 const { keyStores, connect, Contract } = require("near-api-js");
+
+import { getManagerContract } from "./utils";
+
 const MAX_TGAS = '300000000000000';
-const TOTAL_DEPOSIT = "100000000000000000000000";//10000000000000000000000000;
+const TOTAL_DEPOSIT = "100000000000000000000000";
 
 export class Backend {
-  constructor({ contractId, networkId }) {
-    this.contractId = contractId;
+  constructor({ networkId }) {
     this.keyStore = new keyStores.BrowserLocalStorageKeyStore();
     this.networkId = networkId;
   }
@@ -33,7 +35,7 @@ export class Backend {
 
     const managerContract = new Contract(
       account,
-      this.contractId,
+      getManagerContract(),
       {
         viewMethods: [],
         changeMethods: ["create_and_transfer"],
@@ -59,6 +61,6 @@ export class Backend {
   }
 
   getAccountName() {
-    return this.contractId;
+    return getManagerContract();
   }
 }

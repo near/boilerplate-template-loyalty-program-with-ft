@@ -1,4 +1,4 @@
-import { getCustomerPrefix } from "./utils";
+import { getCustomerPrefix, getManagerContract, getFtContract } from "./utils";
 
 const { utils, keyStores, connect, Contract } = require("near-api-js");
 const FT_TGAS = '3000000000000';
@@ -6,17 +6,14 @@ const TOKENS_FOR_COFFEE = "30";
 const FT_TRANSFER_MIN_DEPOSIT = "1";
 
 export class Customer {
-  constructor({ managerContractId, merchantId, ftContractId, networkId, backend }) {
-    this.managerContractId = managerContractId;
-    this.merchantId = merchantId;
+  constructor({ networkId, backend }) {
     this.networkId = networkId;
-    this.ftContractId = ftContractId;
     this.keyStore = new keyStores.BrowserLocalStorageKeyStore();
     this.backend = backend;
   }
 
   async purchaseCoffeeWithCC() {
-    const prefix = getCustomerPrefix(this.merchantId);
+    const prefix = getCustomerPrefix();
     if (!(await this.getKeyPair())) {
         await this.createKeyPair();
     }
@@ -35,7 +32,7 @@ export class Customer {
     
     return await ftContract.ft_transfer(
       {
-        receiver_id: this.managerContractId,
+        receiver_id: this.getManagerContractId(),
         amount: TOKENS_FOR_COFFEE,
       },
       FT_TGAS,
@@ -74,7 +71,7 @@ export class Customer {
     const account = await this.nearConnection.account(this.getAccountName());
     return new Contract(
       account, // the account object that is connecting
-      this.ftContractId,
+      this.getFtContractId(),
       {
         viewMethods: ["ft_balance_of"], // view methods do not change state but usually return a value
         changeMethods: ["ft_transfer"], // change methods modify state
@@ -92,8 +89,15 @@ export class Customer {
   }
 
   getAccountName() {
-    const prefix = getCustomerPrefix(this.merchantId);
-    return `${prefix}.${this.managerContractId}`
+    const prefix = getCustomerPrefix();
+    return `${prefix}.${this.getManagerContractId()}`
   }
 
+  getManagerContractId() {
+    return getManagerContract();
+  }
+
+  getFtContractId() {
+    return getFtContract();
+  }
 }

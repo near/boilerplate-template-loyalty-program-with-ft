@@ -131,14 +131,6 @@ Backend.js is a simple web2 backend simulated on the frontend in this template.
 Usage
 =====
 
-Put the merchant name without the network suffix in the `.env.local` file 
-in the `frontend` folder (see `frontend/.env.local.exmaple` file). Here is an example for a merchant account `awesome-merchant.testnet`:
-
-  MERCHANT_ID=awesome-merchant
-
-**Important note**: MERCHANT_ID is **not** the account that deploys the factory contract. MERCHANT_ID is the account name of a merchant that
-creates the loaylty program using the UI.
-
 Start your frontend:
 
     npm run build:web & npm start

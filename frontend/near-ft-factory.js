@@ -1,16 +1,17 @@
 /* Interface to talk with the contract factory */
 const { utils } = require("near-api-js");
+import { getManagerContract } from "./utils";
+
 
 const MAX_TGAS = '300000000000000';
 const DEPOSIT = '4989140000000000000000000';
 const NO_DEPOSIT = '0';
 
 export class Factory {
-  constructor({ contractId, walletToUse, backend, managerContractId }) {
+  constructor({ contractId, walletToUse, backend }) {
     this.contractId = contractId;
     this.wallet = walletToUse;
     this.backend = backend;
-    this.managerContractId = managerContractId;
   }
 
   async createFungibleToken(name, symbol, totalSupply) {
@@ -34,7 +35,7 @@ export class Factory {
   async setAccessKey() {
     let keyPair = await this.createKeyPair();
     await this.wallet.callMethod({
-      contractId: this.managerContractId,
+      contractId: this.getManagerContractId(),
       method: 'set_access_key',
       args: {
         public_key: keyPair.getPublicKey().toString(),
@@ -57,5 +58,9 @@ export class Factory {
 
   async getProgram(account_id) {
     return await this.wallet.viewMethod({ contractId: this.contractId, method: 'user_program', args: { account_id } })
+  }
+
+  getManagerContractId() {
+    return getManagerContract();
   }
 }

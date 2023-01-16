@@ -3,9 +3,9 @@ import React from 'react';
 import './assets/global.css';
 
 import { SignOutButton, Toggle } from './ui-components';
-import { getCustomerPrefix } from './utils';
+import { getCustomerPrefix, getMerchantAddress } from './utils';
 
-export default function App({ isSignedIn, factory, wallet, customer, MERCHANT_ADDRESS, MERCHANT }) {
+export default function App({ isSignedIn, factory, wallet, customer }) {
   const [programExists, setProgramExists] = React.useState(false);
   const [uiPleaseWait, setUiPleaseWait] = React.useState(true);
   const [customerView, setCustomerView] = React.useState(false);
@@ -21,9 +21,14 @@ export default function App({ isSignedIn, factory, wallet, customer, MERCHANT_AD
 
   // Get blockchain state once on component load
   React.useEffect(() => {
-    setCustomerUuid(getCustomerPrefix(MERCHANT));
+    if (!isSignedIn) {
+      setUiPleaseWait(false);
+      return;
+    }
+    const merchantAddress = getMerchantAddress();
+    setCustomerUuid(getCustomerPrefix());
     setUiPleaseWait(true);
-    factory.checkProgramExists(MERCHANT_ADDRESS)
+    factory.checkProgramExists(merchantAddress)
       .then(programExists =>{
         setProgramExists(programExists);
       })
@@ -33,7 +38,8 @@ export default function App({ isSignedIn, factory, wallet, customer, MERCHANT_AD
   React.useEffect(() => {
     if (programExists) { 
       setUiPleaseWait(true);
-      factory.getProgram(MERCHANT_ADDRESS)
+      const merchantAddress = getMerchantAddress();
+      factory.getProgram(merchantAddress)
         .then(metadata => {
           setFtMetadata(metadata.ft);
         })
@@ -77,7 +83,8 @@ export default function App({ isSignedIn, factory, wallet, customer, MERCHANT_AD
 
     factory.createFungibleToken(name, symbol, totalSupply)
       .then(() => {
-        factory.checkProgramExists(MERCHANT_ADDRESS)
+        const merchantAddress = getMerchantAddress();
+        factory.checkProgramExists(merchantAddress)
         .then((programExists) => setProgramExists(programExists));
       })
       .then(() => {

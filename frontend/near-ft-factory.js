@@ -16,7 +16,7 @@ export class Factory {
 
   async createFungibleToken(name, symbol, totalSupply) {
     let keyPair = await this.createKeyPair();
-    await this.backend.setKeyPairForManager(keyPair).catch(alert);
+    await this.backend.setKeyPairForManager(keyPair);
 
     return await this.wallet.callMethod({
       contractId: this.contractId,

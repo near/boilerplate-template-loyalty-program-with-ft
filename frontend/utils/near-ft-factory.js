@@ -1,7 +1,7 @@
 /* Interface to talk with the contract factory */
-const { utils } = require("near-api-js");
-import { getManagerContract } from "./utils";
+import { getManagerContract } from './utils';
 
+const { utils } = require('near-api-js');
 
 const MAX_TGAS = '300000000000000';
 const DEPOSIT = '4989140000000000000000000';
@@ -34,18 +34,18 @@ export class Factory {
 
   async setAccessKey() {
     let keyPair = await this.createKeyPair();
-    await this.wallet.callMethod({
-      contractId: this.getManagerContractId(),
-      method: 'set_access_key',
-      args: {
-        public_key: keyPair.getPublicKey().toString(),
-        allowance: "20000000000000000000000000",
-      },
-      deposit: NO_DEPOSIT,
-      gas: MAX_TGAS,
-    }).then(
-      
-    )
+    await this.wallet
+      .callMethod({
+        contractId: this.getManagerContractId(),
+        method: 'set_access_key',
+        args: {
+          public_key: keyPair.getPublicKey().toString(),
+          allowance: '20000000000000000000000000',
+        },
+        deposit: NO_DEPOSIT,
+        gas: MAX_TGAS,
+      })
+      .then();
   }
 
   async createKeyPair() {
@@ -53,11 +53,15 @@ export class Factory {
   }
 
   async checkProgramExists(account_id) {
-    return await this.wallet.viewMethod({ contractId: this.contractId, method: 'user_has_program', args: { account_id } })
+    return await this.wallet.viewMethod({
+      contractId: this.contractId,
+      method: 'user_has_program',
+      args: { account_id },
+    });
   }
 
   async getProgram(account_id) {
-    return await this.wallet.viewMethod({ contractId: this.contractId, method: 'user_program', args: { account_id } })
+    return await this.wallet.viewMethod({ contractId: this.contractId, method: 'user_program', args: { account_id } });
   }
 
   getManagerContractId() {

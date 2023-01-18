@@ -1,9 +1,9 @@
-const { keyStores, connect, Contract } = require("near-api-js");
+import { getManagerContract } from './utils';
 
-import { getManagerContract } from "./utils";
+const { keyStores, connect, Contract } = require('near-api-js');
 
 const MAX_TGAS = '300000000000000';
-const TOTAL_DEPOSIT = "100000000000000000000000";
+const TOTAL_DEPOSIT = '100000000000000000000000';
 
 export class Backend {
   constructor({ networkId }) {
@@ -13,34 +13,30 @@ export class Backend {
 
   async createAndTransfer(publicKey, prefix) {
     if (!(await this.getKeyPair())) {
-      throw new Error("You need to pass a function call access key to the backend first.");
+      throw new Error('You need to pass a function call access key to the backend first.');
     }
 
     const keyPair = await this.getKeyPair();
-    const inMemoryKeyStore = new keyStores.InMemoryKeyStore()
+    const inMemoryKeyStore = new keyStores.InMemoryKeyStore();
     inMemoryKeyStore.setKey(this.networkId, this.getAccountName(), keyPair);
 
     const connectionConfig = {
       networkId: this.networkId,
       keyStore: inMemoryKeyStore,
-      nodeUrl: "https://rpc.testnet.near.org",
-      walletUrl: "https://wallet.testnet.near.org",
-      helperUrl: "https://helper.testnet.near.org",
-      explorerUrl: "https://explorer.testnet.near.org",
+      nodeUrl: 'https://rpc.testnet.near.org',
+      walletUrl: 'https://wallet.testnet.near.org',
+      helperUrl: 'https://helper.testnet.near.org',
+      explorerUrl: 'https://explorer.testnet.near.org',
     };
-    
+
     this.nearConnection = await connect(connectionConfig);
-    
+
     const account = await this.nearConnection.account(this.getAccountName());
 
-    const managerContract = new Contract(
-      account,
-      getManagerContract(),
-      {
-        viewMethods: [],
-        changeMethods: ["create_and_transfer"],
-      }
-    );
+    const managerContract = new Contract(account, getManagerContract(), {
+      viewMethods: [],
+      changeMethods: ['create_and_transfer'],
+    });
 
     return await managerContract.create_and_transfer(
       {
@@ -48,7 +44,7 @@ export class Backend {
         public_key: publicKey,
       },
       MAX_TGAS,
-      TOTAL_DEPOSIT
+      TOTAL_DEPOSIT,
     );
   }
 

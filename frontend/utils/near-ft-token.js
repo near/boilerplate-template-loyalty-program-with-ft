@@ -6,10 +6,10 @@ export class FT {
   }
 
   async getFungibleTokenMetadata() {
-    return await this.wallet.viewMethod({ contractId: this.contractId, method: 'ft_metadata' })
+    return await this.wallet.viewMethod({ contractId: this.contractId, method: 'ft_metadata' });
   }
 
   async getTotalSupply() {
-    return await this.wallet.viewMethod({ contractId: this.contractId, method: 'ft_total_supply' })
+    return await this.wallet.viewMethod({ contractId: this.contractId, method: 'ft_total_supply' });
   }
 }

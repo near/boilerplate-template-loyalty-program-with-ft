@@ -1,17 +1,16 @@
 import React from 'react';
+import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 
 import '../assets/global.css';
 import CustomerView from '../modules/CustomerView';
 import MarchantView from '../modules/MarchantView';
 
-import Toggle from '../components/Toggle';
 import { getCustomerPrefix, getMerchantAddress } from '../utils/utils';
 
 const App = ({ factory, wallet, customer }) => {
   const [isSignedIn, setIsSignedIn] = React.useState(false);
   const [programExists, setProgramExists] = React.useState(false);
   const [uiPleaseWait, setUiPleaseWait] = React.useState(true);
-  const [customerView, setCustomerView] = React.useState(false);
   const [customerUuid, setCustomerUuid] = React.useState('');
   const [customerBalance, setCustomerBalance] = React.useState();
 
@@ -115,37 +114,45 @@ const App = ({ factory, wallet, customer }) => {
       });
   }
 
-  function switchView() {
-    setCustomerView(!customerView);
-  }
-
   return (
-    <div className="main">
-      <Toggle text={customerView ? 'Customer' : 'Merchant'} onChange={switchView} checked={customerView} />
-
-      {customerView ? (
-        <CustomerView
-          uiPleaseWait={uiPleaseWait}
-          customerUuid={customerUuid}
-          customerBalance={customerBalance}
-          purchaseWithCC={purchaseWithCC}
-          purchaseWithTokens={purchaseWithTokens}
-        />
-      ) : (
-        <MarchantView
-          uiPleaseWait={uiPleaseWait}
-          isSignedIn={isSignedIn}
-          programExists={programExists}
-          ftMetadata={ftMetadata}
-          setSymbol={setSymbol}
-          setName={setName}
-          setTotalSupply={setTotalSupply}
-          createLoyaltyToken={createLoyaltyToken}
-          errorMessage={errorMessage}
-          wallet={wallet}
-        />
-      )}
-    </div>
+    <Router>
+      <div className="main">
+        {/* <Header> */}
+        <Link to="/customer">Customer View</Link> - <Link to="/">Marchant View</Link>
+        <Routes>
+          <Route
+            exact
+            path="/"
+            element={
+              <MarchantView
+                uiPleaseWait={uiPleaseWait}
+                isSignedIn={isSignedIn}
+                programExists={programExists}
+                ftMetadata={ftMetadata}
+                setSymbol={setSymbol}
+                setName={setName}
+                setTotalSupply={setTotalSupply}
+                createLoyaltyToken={createLoyaltyToken}
+                errorMessage={errorMessage}
+                wallet={wallet}
+              />
+            }
+          ></Route>
+          <Route
+            path="/customer/"
+            element={
+              <CustomerView
+                uiPleaseWait={uiPleaseWait}
+                customerUuid={customerUuid}
+                customerBalance={customerBalance}
+                purchaseWithCC={purchaseWithCC}
+                purchaseWithTokens={purchaseWithTokens}
+              />
+            }
+          ></Route>
+        </Routes>
+      </div>
+    </Router>
   );
 };
 

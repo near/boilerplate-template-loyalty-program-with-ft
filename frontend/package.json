@@ -37,6 +37,7 @@
     "near-api-js": "^0.44.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-router-dom": "^6.6.2",
     "regenerator-runtime": "^0.13.9"
   },
   "resolutions": {

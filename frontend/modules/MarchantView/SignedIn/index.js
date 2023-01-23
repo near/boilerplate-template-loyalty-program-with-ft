@@ -1,5 +1,5 @@
-import RewardProgramDetails from '../SignedOut/RewardProgramDetails';
-import RewardProgramForm from '../SignedOut/RewardProgramForm';
+import RewardProgramDetails from './RewardProgramDetails';
+import RewardProgramForm from './RewardProgramForm';
 
 const SignedIn = ({ programExists, ftMetadata, createLoyaltyToken }) => {
   return (

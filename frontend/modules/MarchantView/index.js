@@ -1,38 +1,69 @@
-import RewardProgramDetails from './RewardProgramDetails';
-import RewardProgramForm from './RewardProgramForm';
-import Sign from '../../components/Sign';
+import { getMerchantAddress } from '../../utils/utils';
+import { useEffect, useState } from 'react';
+import Header from './Header';
+import Welcome from './Welcome/Welcome';
+import SignedOut from './SignedOut';
+import SignedIn from './SignedIn';
 
-const MarchantView = ({
-  uiPleaseWait,
-  isSignedIn,
-  programExists,
-  ftMetadata,
-  setSymbol,
-  setName,
-  setTotalSupply,
-  createLoyaltyToken,
-  errorMessage,
-  wallet,
-}) => {
+const MarchantView = ({ factory, wallet, customer }) => {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [programExists, setProgramExists] = useState(false);
+  const [ftMetadata, setFtMetadata] = useState({});
+
+  useEffect(() => {
+    const checkSignIn = async () => {
+      const isSignedIn = await wallet.startUp();
+
+      setIsSignedIn(isSignedIn);
+    };
+
+    checkSignIn();
+  }, [wallet]);
+
+  // Get blockchain state once on component load
+  useEffect(() => {
+    if (!isSignedIn) {
+      return;
+    }
+    const merchantAddress = getMerchantAddress();
+    factory.checkProgramExists(merchantAddress).then((programExists) => {
+      setProgramExists(programExists);
+    });
+  }, [factory, isSignedIn]);
+
+  useEffect(() => {
+    if (programExists) {
+      const merchantAddress = getMerchantAddress();
+      factory
+        .getProgram(merchantAddress)
+        .then((metadata) => {
+          setFtMetadata(metadata.ft);
+        })
+        .catch(alert);
+    }
+  }, [programExists, customer, factory]);
+
+  function createLoyaltyToken({ name, symbol, totalSupply }) {
+    factory
+      .createFungibleToken(name, symbol, totalSupply)
+      .then(() => {
+        const merchantAddress = getMerchantAddress();
+        factory.checkProgramExists(merchantAddress).then((programExists) => setProgramExists(programExists));
+      })
+      .then(() => {
+        factory.setAccessKey();
+      })
+      .catch(alert);
+  }
+
   return (
-    <div className={uiPleaseWait ? 'please-wait' : 'container'}>
-      <h1>Merchant view</h1>
-      <div className="change">
-        {isSignedIn && programExists && <RewardProgramDetails ftMetadata={ftMetadata} />}
-        {isSignedIn && !programExists && <p> There is no reward program, create one! </p>}
-
-        {isSignedIn && !programExists && (
-          <RewardProgramForm
-            setName={setName}
-            setSymbol={setSymbol}
-            setTotalSupply={setTotalSupply}
-            createLoyaltyToken={createLoyaltyToken}
-            errorMessage={errorMessage}
-          />
-        )}
-
-        <Sign isSignedIn={isSignedIn} wallet={wallet} />
-      </div>
+    <div>
+      <Header isSignedIn={isSignedIn} programExists={programExists} ftMetadata={ftMetadata} wallet={wallet} />
+      <Welcome isSignedIn={isSignedIn} programExists={programExists} ftMetadata={ftMetadata} />
+      {isSignedIn && (
+        <SignedIn programExists={programExists} ftMetadata={ftMetadata} createLoyaltyToken={createLoyaltyToken} />
+      )}
+      {isSignedIn || <SignedOut />}
     </div>
   );
 };

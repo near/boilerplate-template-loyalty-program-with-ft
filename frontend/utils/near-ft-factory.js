@@ -12,9 +12,7 @@ export class Factory {
     this.contractId = contractId;
     this.wallet = walletToUse;
     this.backend = backend;
-    this.provider = new providers.JsonRpcProvider(
-      "https://rpc.testnet.near.org"
-    );
+    this.provider = new providers.JsonRpcProvider('https://rpc.testnet.near.org');
   }
 
   async createFungibleToken(name, symbol, totalSupply) {
@@ -69,13 +67,13 @@ export class Factory {
 
   async getAllPrograms() {
     const rawResult = await this.provider.query({
-      request_type: "call_function",
+      request_type: 'call_function',
       account_id: this.contractId,
-      method_name: "get_all_programs",
-      args_base64: "e30=",
-      finality: "optimistic",
+      method_name: 'get_all_programs',
+      args_base64: 'e30=',
+      finality: 'optimistic',
     });
-  
+
     const res = JSON.parse(Buffer.from(rawResult.result));
     let programs = [];
     res.forEach((p) => {

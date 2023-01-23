@@ -1,6 +1,7 @@
-import { getMerchantAddress } from '../../utils/utils';
 import { useEffect, useState } from 'react';
+
 import Header from './Header';
+import { getMerchantAddress } from '../../utils/utils';
 import Welcome from './Welcome/Welcome';
 import SignedOut from './SignedOut';
 import SignedIn from './SignedIn';

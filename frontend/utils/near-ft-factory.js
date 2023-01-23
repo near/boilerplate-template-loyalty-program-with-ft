@@ -1,7 +1,7 @@
 /* Interface to talk with the contract factory */
 import { getManagerContract } from './utils';
 
-const { utils } = require('near-api-js');
+const { utils, providers } = require('near-api-js');
 
 const MAX_TGAS = '300000000000000';
 const DEPOSIT = '4989140000000000000000000';
@@ -12,6 +12,9 @@ export class Factory {
     this.contractId = contractId;
     this.wallet = walletToUse;
     this.backend = backend;
+    this.provider = new providers.JsonRpcProvider(
+      "https://rpc.testnet.near.org"
+    );
   }
 
   async createFungibleToken(name, symbol, totalSupply) {
@@ -62,6 +65,23 @@ export class Factory {
 
   async getProgram(account_id) {
     return await this.wallet.viewMethod({ contractId: this.contractId, method: 'user_program', args: { account_id } });
+  }
+
+  async getAllPrograms() {
+    const rawResult = await this.provider.query({
+      request_type: "call_function",
+      account_id: this.contractId,
+      method_name: "get_all_programs",
+      args_base64: "e30=",
+      finality: "optimistic",
+    });
+  
+    const res = JSON.parse(Buffer.from(rawResult.result));
+    let programs = [];
+    res.forEach((p) => {
+      programs = [...programs, { accountId: p[0], contracts: p[1] }];
+    });
+    return programs;
   }
 
   getManagerContractId() {

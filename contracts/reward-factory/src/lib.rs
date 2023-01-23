@@ -56,4 +56,8 @@ impl Contract {
             None => false,
         }
     }
+
+    pub fn get_all_programs(&self) -> Vec<(AccountId, ProgramInfo)>{
+        return self.programs.to_vec();
+    }
 }

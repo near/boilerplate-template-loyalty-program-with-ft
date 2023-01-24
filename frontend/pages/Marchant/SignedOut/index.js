@@ -1,4 +1,4 @@
-import LoyaltyPrograms from '../../CustomerView/ProgramNotActive/LoyaltyPrograms';
+import LoyaltyPrograms from '../../Customer/ProgramNotActive/LoyaltyPrograms';
 
 const SignedOut = () => {
   return (

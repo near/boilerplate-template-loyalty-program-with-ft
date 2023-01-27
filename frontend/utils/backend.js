@@ -1,4 +1,5 @@
 import { getManagerContract } from './utils';
+import { wallet } from './wallet-selector';
 
 const { keyStores, connect, Contract } = require('near-api-js');
 
@@ -58,5 +59,14 @@ export class Backend {
 
   getAccountName() {
     return getManagerContract();
+  }
+
+  async startUp() {
+    await wallet.startUp();
+  }
+
+  checkIsProgramActive() {
+    const isSignedIn = wallet.walletSelector.isSignedIn();
+    return isSignedIn;
   }
 }

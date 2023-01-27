@@ -1,5 +1,6 @@
 /* Interface to talk with the contract factory */
 import { getManagerContract } from './utils';
+import { wallet } from './wallet-selector';
 
 const { utils, providers } = require('near-api-js');
 
@@ -8,18 +9,20 @@ const DEPOSIT = '4989140000000000000000000';
 const NO_DEPOSIT = '0';
 
 export class Factory {
-  constructor({ contractId, walletToUse, backend }) {
+  constructor({ contractId, backend }) {
     this.contractId = contractId;
-    this.wallet = walletToUse;
     this.backend = backend;
     this.provider = new providers.JsonRpcProvider('https://rpc.testnet.near.org');
   }
 
   async createFungibleToken(name, symbol, totalSupply) {
+    // tutaj jest problem, bo `setKeyPairForManager` jest wywolywane tylko przy tworzeniu tokena
+    //  - wiec jak sie zaloguje na konto, ktore juz ma token (wiec sie go nie tworzy) to nie da sie kupic kawy bo `createAndTransfer` wyrzuca blad, bo nie ma keyPair
+    //  - to `this.backend.setKeyPairForManager` musi byc wywolywane przy kazdym zalogowaniu
     let keyPair = await this.createKeyPair();
     await this.backend.setKeyPairForManager(keyPair);
 
-    return await this.wallet.callMethod({
+    return await wallet.callMethod({
       contractId: this.contractId,
       method: 'create_factory_subaccount_and_deploy',
       args: {
@@ -35,7 +38,7 @@ export class Factory {
 
   async setAccessKey() {
     let keyPair = await this.createKeyPair();
-    await this.wallet
+    await wallet
       .callMethod({
         contractId: this.getManagerContractId(),
         method: 'set_access_key',
@@ -54,7 +57,7 @@ export class Factory {
   }
 
   async checkProgramExists(account_id) {
-    return await this.wallet.viewMethod({
+    return await wallet.viewMethod({
       contractId: this.contractId,
       method: 'user_has_program',
       args: { account_id },
@@ -62,7 +65,7 @@ export class Factory {
   }
 
   async getProgram(account_id) {
-    return await this.wallet.viewMethod({ contractId: this.contractId, method: 'user_program', args: { account_id } });
+    return await wallet.viewMethod({ contractId: this.contractId, method: 'user_program', args: { account_id } });
   }
 
   async getAllPrograms() {

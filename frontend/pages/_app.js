@@ -1,22 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import '../styles/globals.css';
 
-import '../assets/global.css';
-import CustomerView from './Customer';
-import MarchantView from './Marchant';
-
-const App = ({ factory, wallet, customer }) => (
-  <Router>
-    <div className="main">
-      <Routes>
-        <Route exact path="/" element={<MarchantView factory={factory} wallet={wallet} customer={customer} />}></Route>
-        <Route
-          path="/customer/:merchantAddress?"
-          element={<CustomerView factory={factory} wallet={wallet} customer={customer} />}
-        ></Route>
-      </Routes>
-    </div>
-  </Router>
-);
-
-export default App;
+export default function App({ Component, pageProps }) {
+  return <Component {...pageProps} />;
+}

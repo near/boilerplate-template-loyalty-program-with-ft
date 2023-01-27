@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import '../assets/global.css';
-import CustomerView from '../modules/CustomerView';
-import MarchantView from '../modules/MarchantView';
+import CustomerView from './Customer';
+import MarchantView from './Marchant';
 
 const App = ({ factory, wallet, customer }) => (
   <Router>

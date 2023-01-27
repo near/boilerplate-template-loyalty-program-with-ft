@@ -1,7 +1,7 @@
 // React
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './pages';
+import App from './pages/_app';
 import { Backend } from './utils/backend';
 import { Customer } from './utils/customer';
 

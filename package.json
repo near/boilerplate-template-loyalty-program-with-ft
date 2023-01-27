@@ -4,10 +4,15 @@
   "license": "(MIT AND Apache-2.0)",
   "scripts": {
     "dev": "cd frontend && npm run dev",
-    "build": "npm run build:frontend",
+    "deploy": "cd contracts && ./deploy.sh && npm run build:frontend",
+    "build": "npm run build:contracts && npm run build:frontend",
+    "build:contracts": "cd contracts && ./build.sh",
     "build:frontend": "cd frontend && npm run build",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "cd contracts && cargo test",
+    "test:integration": "npm run build:contracts && cd integration-tests && npm test -- -- \"./contracts/target/wasm32-unknown-unknown/release/reward_factory.wasm\"",
+    "postinstall": "cd frontend && npm install && cd .. && cd integration-tests && npm install && echo rs contract",
     "start": "cd frontend && npm run start",
-    "postinstall": "cd frontend && npm install",
     "lint": "cd frontend && npm run lint",
     "prepare": "husky install"
   },

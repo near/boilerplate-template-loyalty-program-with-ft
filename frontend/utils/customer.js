@@ -14,6 +14,7 @@ export class Customer {
 
   async purchaseCoffeeWithCC() {
     const prefix = getCustomerPrefix();
+
     if (!(await this.getKeyPair())) {
       await this.createKeyPair();
     }

@@ -1,9 +1,7 @@
-const SignOutButton = ({ accountId, onClick }) => {
-  return (
-    <button className="btn btn-primary" onClick={onClick}>
-      Sign out {accountId}
-    </button>
-  );
-};
+const SignOutButton = ({ accountId, onClick }) => (
+  <button onClick={onClick} className="text-sm font-semibold leading-6 text-gray-900">
+    <span aria-hidden="true">&larr;</span> Sign Out {accountId}
+  </button>
+);
 
 export default SignOutButton;

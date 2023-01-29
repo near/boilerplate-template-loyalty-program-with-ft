@@ -6,20 +6,26 @@ const RewardProgramDetails = ({ ftMetadata }) => (
       </div>
       <hr />
       <p className="mt-6 text-sm leading-6 text-gray-600">
-        - opisac co sie w tym momencie stalo od strony blockchain: ze utworzony zostal loyalty program z uzyciem
-        kontraktow itp
+        Congratulations! You just created a loyalty program! The factory contract deployed a pair of contracts assigned to 
+        your account: manager contract and FT contract. The FT contract was initialized with the fungible token metadata 
+        that you provided in the previous step. Go to 'contracts' directory to learn more.
         <br />
-        - ze puki jest zalogowany, to symulujemy w ten sposob to ze backend jest aktywny czyli loyalty program jest
-        aktywny i dziala
         <br />
-        - ze jak kliknie "Open customer app" to zostanie przeniesiony do widoku klienta, ktory jest oddzielnym serwisem
-        - dziala niezaleznie od backendu, komunikuje sie z backendem zeby kupic za CC albo Tokeny
+        This project is just a template and some things are simplified. The web2 backend is simulated on the frontend (see: frontend/backend.js).
+        As long as you are logged in, the backend remains in the active state and customers can use your loyalty program.
         <br />
-        - po kliknieciu "Open customer app" zostanie uruchomiony link, zawierajacy w sobie identyfikator loyalty program
-        - z pomoca tego linka, Customer moga kupowac
         <br />
-        - ze moze sie tez wylogowac, wtedy program zostaje zamkniety, przestaje dzialac
-        <br />- poprzez login i logout symulujemy Aktywacje oraz Zamkniecie programu lojalnosciowego
+        Click 'Open customer app' to see how a customer can interact with your loyalty program. This is a separate service
+        that communicates both with the backend and the FT contract to get and spend some tokens that you just created.
+        <br />
+        <br />
+        Clicking on 'Open customer app' generates a link with merchant account id. That's how you account id is passed to
+        the customer app. The factory contract stores information about all loyalty programs deployed by merchants. This 
+        information is fetched by the customer app.
+        <br />
+        <br />
+        If you log in, the customer app will be deactivated. Log in again to activate the backend for the customer app.
+        <br />
       </p>
     </div>
     <div className="mt-10 leading-4 mt-2 overflow-hidden text-left shadow-2xl ring-1 ring-gray-900/5 rounded-2xl">
@@ -28,11 +34,11 @@ const RewardProgramDetails = ({ ftMetadata }) => (
           <span className="text-indigo-300 font-light">Loyalty Program </span>
           <span className="font-medium">Details</span>
         </h1>
-        <p className="text-sm text-indigo-100">to sa dane twojego programu lojalnosciowego pobrane z blockchain</p>
+        <p className="text-sm text-indigo-100">This is your loyalty program data fetched from the blockchain:</p>
       </div>
       <div className=" bg-white text-base">
         <div className="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-10">
-          <dt className="font-medium text-gray-500">Account</dt>
+          <dt className="font-medium text-gray-500">FT Account</dt>
           <dd className="mt-1 text-gray-900 sm:col-span-2 sm:mt-0">{ftMetadata.account_id}</dd>
         </div>
         <div className="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-10">

@@ -36,22 +36,6 @@ export class Factory {
     });
   }
 
-  async setAccessKey() {
-    let keyPair = await this.createKeyPair();
-    await wallet
-      .callMethod({
-        contractId: this.getManagerContractId(),
-        method: 'set_access_key',
-        args: {
-          public_key: keyPair.getPublicKey().toString(),
-          allowance: '20000000000000000000000000',
-        },
-        deposit: NO_DEPOSIT,
-        gas: MAX_TGAS,
-      })
-      .then();
-  }
-
   async createKeyPair() {
     return utils.key_pair.KeyPairEd25519.fromRandom();
   }

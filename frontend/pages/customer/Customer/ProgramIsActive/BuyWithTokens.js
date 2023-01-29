@@ -28,8 +28,15 @@ const BuyWithTokens = ({ canCollect, purchaseWithTokens, product, ftMetadata }) 
           <p className="text-xs text-gray-500 mt-10">
             <ul className="list-disc pl-6">
               <li>
-                opis dodac, ze po kliknieciu, konto uzytkownika jest autoryzowane (w jaki sposob) a klucze i tokeny sa
-                odejmowane z jego konta
+                If you can use this option this means that an account was already created for you
+                (this happens when you buy a coffee with CC for the first time)
+              </li>
+              <li>
+                The call is made to the FT contract to transfer tokens from your account to manager's account.
+              </li>
+              <li>
+                The call is authorized with a pair of keys associated with this account. Only you have the access
+                to your tokens.
               </li>
             </ul>
           </p>

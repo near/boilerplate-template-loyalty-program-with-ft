@@ -7,10 +7,10 @@ const Welcome = ({ isSignedIn, programExists, ftMetadata }) => (
     <>
       Loyalty Program <b>Administration Panel</b>
     </>
-    {programExists ? ftMetadata.token_name : 'no loyalty program working...'}
+    {programExists ? ftMetadata.token_name : 'No loyalty program is active'}
     <>
-      {!isSignedIn && <div>...sign in to open and run your Loyalty Program</div>}
-      {isSignedIn && !programExists && <div>...use form below to create new Loyalty Program</div>}
+      {!isSignedIn && <div>Sign in to create a new program or see the one you have already created</div>}
+      {isSignedIn && !programExists && <div>Fill in the form to create a loyalty program</div>}
     </>
     {!isSignedIn && <SignInButton variant="button" onClick={() => wallet.signIn()} />}
   </WelcomeSection>

@@ -98,7 +98,7 @@ impl Contract {
                 TGAS * 20,
             );
 
-        // Add full access key is the user passes one
+        // Add full access key if the user passes one
         if let Some(pk) = public_key {
             ft_promise = ft_promise.add_full_access_key(pk.clone());
             manager_promise = manager_promise.add_full_access_key(pk);

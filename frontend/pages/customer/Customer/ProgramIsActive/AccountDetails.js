@@ -9,13 +9,17 @@ const AccountDetails = ({ customerUuid, ftMetadata, customerBalance }) => (
     <div className="text-base">
       {!!customerBalance || (
         <>
-          <p className="mt-6 text-gray-600">It's your first time at this LP, you don't have an account yet.</p>
-          <p className="mt-2 text-gray-600">After first purchase:</p>
+          <p className="mt-6 text-gray-600">Welcome to the customer app! It's your first time using this loyalty program, you don't have an account yet.</p>
+          <p className="mt-2 text-gray-600">After the first purchase:</p>
           <p className="mt-2 text-gray-600">
-            - Your account will be created
+            - a new account will be created for you (and you don't have to do anything)
             <br />
-            - bedzie to w pelni aktywne konto Near - dzieki temu wszystkie twoje zakupy i zebrane tokeny beda
-            przechowywane na blockchain
+            - it will be your personal account - you hold all the keys and only you have access to it
+            <br />
+            - it will be a subaccount of the manager contract - see the contracts/manager-contract to see how this happens under the hood
+            <br />
+            - This account will be a full Near account. You can perform operations on the blockchain like getting and spending your tokens,
+              deploying contracts and more.
             <br />
           </p>
         </>
@@ -23,7 +27,7 @@ const AccountDetails = ({ customerUuid, ftMetadata, customerBalance }) => (
       {!!customerBalance && (
         <>
           <p className="mt-6 text-gray-600">Your User ID for {ftMetadata.token_name} Loyalty Program:</p>
-          <p className="text-gray-900 text-2xl font-bold">{customerUuid} - dac pelna nazwe konta</p>
+          <p className="text-gray-900 text-2xl font-bold">{customerUuid}</p>
           <p className="mt-6 text-gray-600">Your {ftMetadata.token_symbol} token balance is:</p>
           <p className="text-gray-900 text-2xl font-bold">
             {customerBalance} {ftMetadata.token_symbol}

@@ -1,4 +1,4 @@
-const BuyWithTokens = ({ canCollect, purchaseWithTokens, product, ftMetadata }) => (
+const BuyWithTokens = ({ canCollect, purchaseWithTokens, product, ftMetadata, buyWithTokensLoader }) => (
   <div className=" ">
     <div className="relative overflow-hidden z-0 relative h-full relative bg-white pb-8 shadow-2xl ring-1 ring-gray-900/5 sm:mx-auto sm:rounded-2xl">
       {!canCollect && <div className="z-10 absolute w-full h-full bg-gray-100 opacity-50"></div>}
@@ -18,9 +18,15 @@ const BuyWithTokens = ({ canCollect, purchaseWithTokens, product, ftMetadata }) 
           <button
             onClick={purchaseWithTokens}
             className="w-full rounded-md bg-indigo-500 px-10 py-3 text-xl leading-10 text-white shadow-sm hover:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            disabled={buyWithTokensLoader}
           >
-            <span className="text-indigo-300">Buy with</span>
-            <span className="font-bold"> {ftMetadata.token_symbol} Token</span>
+            {buyWithTokensLoader && 'Buying'}
+            {buyWithTokensLoader || (
+              <>
+                <span className="text-indigo-300">Buy with</span>
+                <span className="font-bold"> {ftMetadata.token_symbol} Token</span>
+              </>
+            )}
           </button>
         </div>
         <hr />

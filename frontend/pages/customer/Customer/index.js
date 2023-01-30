@@ -5,20 +5,10 @@ import ProgramIsActive from './ProgramIsActive';
 import ProgramNotActive from './ProgramNotActive';
 import Welcome from './Welcome';
 import { useRouter } from 'next/router';
-
-import { Backend } from '../../../utils/backend';
-import { Customer } from '../../../utils/customer';
-
-// NEAR
-import { Factory } from '../../../utils/near-ft-factory';
 import PageBackground from '../../../components/PageBackground';
-
-const FACTORY_ADDRESS = process.env.CONTRACT_NAME;
-const NETWORK_ID = 'testnet';
-
-let backend;
-let factory;
-let customer;
+import { backend } from '../../../utils/backend';
+import { factory } from '../../../utils/near-ft-factory';
+import { customer } from '../../../utils/customer';
 
 const CustomerView = () => {
   const router = useRouter();
@@ -30,14 +20,8 @@ const CustomerView = () => {
   const [customerBalance, setCustomerBalance] = useState();
   const [customerUuid, setCustomerUuid] = useState('');
   const [programsList, setProgramsList] = useState([]);
-  const [loader, setLoader] = useState(true);
 
-  useEffect(() => {
-    backend = new Backend({ networkId: NETWORK_ID });
-    factory = new Factory({ contractId: FACTORY_ADDRESS, backend });
-    customer = new Customer({ networkId: NETWORK_ID, backend });
-  }, []);
-
+  // TODO: instead of calling backend directly, create a frontend class that will handle backend - it will be much clearer logically
   useEffect(() => {
     const checkSignIn = async () => {
       await backend.startUp();

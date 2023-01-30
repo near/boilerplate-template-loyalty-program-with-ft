@@ -7,7 +7,10 @@ import SignedOut from './SignedOut';
 import SignedIn from './SignedIn';
 import PageBackground from '../../../components/PageBackground';
 
-const MarchantPage = ({ factory, customer, backend }) => {
+import { backend } from '../../../utils/backend';
+import { factory } from '../../../utils/near-ft-factory';
+
+const MarchantPage = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [programExists, setProgramExists] = useState(false);
   const [ftMetadata, setFtMetadata] = useState({});

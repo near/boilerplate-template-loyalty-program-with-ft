@@ -24,6 +24,7 @@ const CustomerView = () => {
   const [customerUuid, setCustomerUuid] = useState('');
   const [programsList, setProgramsList] = useState([]);
   const [buyWithCCLoader, setBuyWithCCLoader] = useState(false);
+  const [buyWithTokensLoader, setBuyWithTokensLoader] = useState(false);
 
   // TODO: instead of calling backend directly, create a frontend class that will handle backend - it will be much clearer logically
   useEffect(() => {
@@ -53,9 +54,14 @@ const CustomerView = () => {
   }
 
   async function purchaseWithTokens(e) {
+    setBuyWithTokensLoader(true);
+
     customer
       .purchaseCoffeeWithTokens()
-      .then(() => alert('Coffee bought with tokens'))
+      .then(() => {
+        alert('Coffee bought with tokens');
+        setBuyWithTokensLoader(true);
+      })
       .then(() => customer.getBalance().then((b) => setCustomerBalance(b)))
       .catch(alert)
       .catch(alert);
@@ -129,6 +135,7 @@ const CustomerView = () => {
               canCollect={canCollect}
               purchaseWithTokens={purchaseWithTokens}
               buyWithCCLoader={buyWithCCLoader}
+              buyWithTokensLoader={buyWithTokensLoader}
             />
           )}
           {programIsActive || <ProgramNotActive programsList={programsList} />}

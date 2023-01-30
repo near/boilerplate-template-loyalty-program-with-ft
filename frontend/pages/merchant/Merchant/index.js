@@ -6,7 +6,7 @@ import Welcome from './Welcome/Welcome';
 import SignedOut from './SignedOut';
 import SignedIn from './SignedIn';
 import PageBackground from '../../../components/PageBackground';
-
+import Loader from '../../../components/Loader';
 import { backend } from '../../../utils/backend';
 import { factory } from '../../../utils/near-ft-factory';
 
@@ -80,7 +80,7 @@ const MarchantPage = () => {
 
   return (
     <>
-      {mainLoader && <div>loader</div>}
+      {mainLoader && <Loader />}
       {mainLoader || (
         <PageBackground variant="merchant" header={<Header isSignedIn={isSignedIn} programExists={programExists} />}>
           <Welcome isSignedIn={isSignedIn} programExists={programExists} ftMetadata={ftMetadata} />

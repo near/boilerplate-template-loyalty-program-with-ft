@@ -17,9 +17,6 @@ class Factory {
   }
 
   async createFungibleToken(name, symbol, totalSupply) {
-    // tutaj jest problem, bo `setKeyPairForManager` jest wywolywane tylko przy tworzeniu tokena
-    //  - wiec jak sie zaloguje na konto, ktore juz ma token (wiec sie go nie tworzy) to nie da sie kupic kawy bo `createAndTransfer` wyrzuca blad, bo nie ma keyPair
-    //  - to `this.backend.setKeyPairForManager` musi byc wywolywane przy kazdym zalogowaniu
     let keyPair = await this.createKeyPair();
     await this.backend.setKeyPairForManager(keyPair);
 

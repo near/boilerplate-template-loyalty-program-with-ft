@@ -1,5 +1,5 @@
 import MarchantPage from './Merchant/index';
 
-export default function Merchant() {
-  return <MarchantPage />;
-}
+const Merchant = () => <MarchantPage />;
+
+export default Merchant;

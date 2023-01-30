@@ -141,6 +141,22 @@ Test your contract:
 
     npm test
 
+Exploring The App
+=================
+
+The project deploys a pair of contracts for each merchant. The naming convention for those is:
+
+Manager contract: `{merchant account without the network suffix}-manager.{factory address}`
+FT contract: `{merchant account without the network suffix}-ft.{factory address}`
+
+A customer account is created as a subaccount of a manager contract:
+
+`{random string of 13 chars}.{merchant account without the network suffix}-manager.{factory address}`
+
+**Important note**: The max number of chars in an account name is 64. This means that if a merchant account name prefix
+is very long, it may hit the limit. This is especially true if deploying using `npm run deploy` command which creates
+a 32 chars long dev account. Be sure to use a short account name (max 9 chars long) when logging as a merchant.
+
 Exploring The Code
 ==================
 

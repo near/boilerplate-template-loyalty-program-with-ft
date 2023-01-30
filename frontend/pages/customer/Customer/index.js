@@ -14,6 +14,8 @@ const CustomerView = () => {
   const router = useRouter();
   const merchantAddress = router.query.program;
 
+  const [mainLoader, setMainLoader] = useState(true);
+
   const [programExists, setProgramExists] = useState(false);
   const [ftMetadata, setFtMetadata] = useState({});
   const [isProgramActive, setIsProgramActive] = useState(false);
@@ -27,7 +29,7 @@ const CustomerView = () => {
       await backend.startUp();
       const isProgramActive = !!backend.checkIsProgramActive();
 
-      setLoader(false);
+      setMainLoader(false);
       setIsProgramActive(isProgramActive);
     };
 
@@ -57,10 +59,16 @@ const CustomerView = () => {
       return;
     }
 
-    setCustomerUuid(getCustomerPrefix());
-    factory.checkProgramExists(merchantAddress).then((programExists) => {
-      setProgramExists(programExists);
-    });
+    const checkProgramExists = async () => {
+      setCustomerUuid(getCustomerPrefix());
+      await factory.checkProgramExists(merchantAddress).then((programExists) => {
+        setProgramExists(programExists);
+      });
+      setMainLoader(false);
+    };
+
+    setMainLoader(true);
+    checkProgramExists();
   }, [isProgramActive, merchantAddress]);
 
   useEffect(() => {
@@ -74,14 +82,18 @@ const CustomerView = () => {
       return;
     }
 
-    factory
-      .getProgram(merchantAddress)
-      .then((metadata) => {
-        setFtMetadata(metadata.ft);
-      })
-      .then(() => customer.getBalance().then((b) => setCustomerBalance(b)))
-      .catch(alert);
-  }, [merchantAddress, programExists]);
+    const checkProgramExists = async () => {
+      const metadata = await factory.getProgram(merchantAddress);
+      setFtMetadata(metadata.ft);
+
+      const balance = await customer.getBalance();
+      setCustomerBalance(balance);
+      setMainLoader(false);
+    };
+
+    setMainLoader(true);
+    checkProgramExists();
+  }, [isProgramActive, merchantAddress, programExists]);
 
   const product = {
     name: 'Large Coffe',
@@ -94,23 +106,26 @@ const CustomerView = () => {
   const programIsActive = !!ftMetadata.account_id;
 
   return (
-    !loader && (
-      <PageBackground variant="customer" header={<Header />}>
-        <Welcome ftMetadata={ftMetadata} programIsActive={programIsActive} merchantAddress={merchantAddress} />
-        {programIsActive && (
-          <ProgramIsActive
-            ftMetadata={ftMetadata}
-            product={product}
-            customerUuid={customerUuid}
-            customerBalance={customerBalance}
-            purchaseWithCC={purchaseWithCC}
-            canCollect={canCollect}
-            purchaseWithTokens={purchaseWithTokens}
-          />
-        )}
-        {programIsActive || <ProgramNotActive programsList={programsList} />}
-      </PageBackground>
-    )
+    <>
+      {mainLoader && <div>loader</div>}
+      {mainLoader || (
+        <PageBackground variant="customer" header={<Header />}>
+          <Welcome ftMetadata={ftMetadata} programIsActive={programIsActive} merchantAddress={merchantAddress} />
+          {programIsActive && (
+            <ProgramIsActive
+              ftMetadata={ftMetadata}
+              product={product}
+              customerUuid={customerUuid}
+              customerBalance={customerBalance}
+              purchaseWithCC={purchaseWithCC}
+              canCollect={canCollect}
+              purchaseWithTokens={purchaseWithTokens}
+            />
+          )}
+          {programIsActive || <ProgramNotActive programsList={programsList} />}
+        </PageBackground>
+      )}
+    </>
   );
 };
 

@@ -20,7 +20,7 @@ const THIRTY_TGAS = '30000000000000';
 const NO_DEPOSIT = '0';
 
 // Wallet that simplifies using the wallet selector
-export class Wallet {
+class Wallet {
   walletSelector;
   wallet;
   network;

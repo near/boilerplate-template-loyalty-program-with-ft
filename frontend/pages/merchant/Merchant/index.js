@@ -11,6 +11,8 @@ import { backend } from '../../../utils/backend';
 import { factory } from '../../../utils/near-ft-factory';
 
 const MarchantPage = () => {
+  const [mainLoader, setMainLoader] = useState(true);
+
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [programExists, setProgramExists] = useState(false);
   const [ftMetadata, setFtMetadata] = useState({});
@@ -20,14 +22,14 @@ const MarchantPage = () => {
     factory.getAllPrograms().then((res) => {
       setProgramsList(res);
     });
-  }, [factory]);
+  }, []);
 
   useEffect(() => {
     const checkSignIn = async () => {
-      console.log('a1x');
       await backend.startUp();
       const isProgramActive = !!backend.checkIsProgramActive();
       setIsSignedIn(isProgramActive);
+      setMainLoader(false);
     };
 
     checkSignIn();
@@ -38,11 +40,18 @@ const MarchantPage = () => {
     if (!isSignedIn) {
       return;
     }
-    const merchantAddress = getMerchantAddress();
-    factory.checkProgramExists(merchantAddress).then((programExists) => {
-      setProgramExists(programExists);
-    });
-  }, [factory, isSignedIn]);
+
+    const checkProgramExists = async () => {
+      const merchantAddress = getMerchantAddress();
+      await factory.checkProgramExists(merchantAddress).then((programExists) => {
+        setProgramExists(programExists);
+      });
+      setMainLoader(false);
+    };
+
+    setMainLoader(true);
+    checkProgramExists();
+  }, [isSignedIn]);
 
   useEffect(() => {
     if (programExists) {
@@ -54,7 +63,7 @@ const MarchantPage = () => {
         })
         .catch(alert);
     }
-  }, [programExists, customer, factory]);
+  }, [programExists]);
 
   function createLoyaltyToken({ name, symbol, totalSupply }) {
     factory
@@ -70,14 +79,19 @@ const MarchantPage = () => {
   }
 
   return (
-    <PageBackground variant="merchant" header={<Header isSignedIn={isSignedIn} programExists={programExists} />}>
-      <Welcome isSignedIn={isSignedIn} programExists={programExists} ftMetadata={ftMetadata} />
+    <>
+      {mainLoader && <div>loader</div>}
+      {mainLoader || (
+        <PageBackground variant="merchant" header={<Header isSignedIn={isSignedIn} programExists={programExists} />}>
+          <Welcome isSignedIn={isSignedIn} programExists={programExists} ftMetadata={ftMetadata} />
 
-      {isSignedIn && (
-        <SignedIn programExists={programExists} ftMetadata={ftMetadata} createLoyaltyToken={createLoyaltyToken} />
+          {isSignedIn && (
+            <SignedIn programExists={programExists} ftMetadata={ftMetadata} createLoyaltyToken={createLoyaltyToken} />
+          )}
+          {isSignedIn || <SignedOut programsList={programsList} />}
+        </PageBackground>
       )}
-      {isSignedIn || <SignedOut programsList={programsList} />}
-    </PageBackground>
+    </>
   );
 };
 

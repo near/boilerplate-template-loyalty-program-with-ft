@@ -79,19 +79,19 @@ const MarchantPage = () => {
   }
 
   return (
-    <>
+    <PageBackground variant="merchant" header={<Header isSignedIn={isSignedIn} programExists={programExists} />}>
       {mainLoader && <Loader />}
       {mainLoader || (
-        <PageBackground variant="merchant" header={<Header isSignedIn={isSignedIn} programExists={programExists} />}>
+        <>
           <Welcome isSignedIn={isSignedIn} programExists={programExists} ftMetadata={ftMetadata} />
 
           {isSignedIn && (
             <SignedIn programExists={programExists} ftMetadata={ftMetadata} createLoyaltyToken={createLoyaltyToken} />
           )}
           {isSignedIn || <SignedOut programsList={programsList} />}
-        </PageBackground>
+        </>
       )}
-    </>
+    </PageBackground>
   );
 };
 

@@ -23,6 +23,7 @@ const CustomerView = () => {
   const [customerBalance, setCustomerBalance] = useState();
   const [customerUuid, setCustomerUuid] = useState('');
   const [programsList, setProgramsList] = useState([]);
+  const [buyWithCCLoader, setBuyWithCCLoader] = useState(false);
 
   // TODO: instead of calling backend directly, create a frontend class that will handle backend - it will be much clearer logically
   useEffect(() => {
@@ -38,9 +39,14 @@ const CustomerView = () => {
   }, []);
 
   function purchaseWithCC(e) {
+    setBuyWithCCLoader(true);
+
     customer
       .purchaseCoffeeWithCC()
-      .then(() => alert('Coffee bought with Credit Card'))
+      .then(() => {
+        alert('Coffee bought with Credit Card');
+        setBuyWithCCLoader(false);
+      })
       .then(() => customer.getBalance().then((b) => setCustomerBalance(b)))
       .catch(alert)
       .catch(alert);
@@ -96,6 +102,7 @@ const CustomerView = () => {
     checkProgramExists();
   }, [isProgramActive, merchantAddress, programExists]);
 
+  // TODO: global
   const product = {
     name: 'Large Coffe',
     fiatCost: '$9.99',
@@ -121,6 +128,7 @@ const CustomerView = () => {
               purchaseWithCC={purchaseWithCC}
               canCollect={canCollect}
               purchaseWithTokens={purchaseWithTokens}
+              buyWithCCLoader={buyWithCCLoader}
             />
           )}
           {programIsActive || <ProgramNotActive programsList={programsList} />}

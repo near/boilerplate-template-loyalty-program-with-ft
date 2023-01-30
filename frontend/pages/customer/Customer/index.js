@@ -107,10 +107,10 @@ const CustomerView = () => {
   const programIsActive = !!ftMetadata.account_id;
 
   return (
-    <>
+    <PageBackground variant="customer" header={<Header />}>
       {mainLoader && <Loader />}
       {mainLoader || (
-        <PageBackground variant="customer" header={<Header />}>
+        <>
           <Welcome ftMetadata={ftMetadata} programIsActive={programIsActive} merchantAddress={merchantAddress} />
           {programIsActive && (
             <ProgramIsActive
@@ -124,9 +124,9 @@ const CustomerView = () => {
             />
           )}
           {programIsActive || <ProgramNotActive programsList={programsList} />}
-        </PageBackground>
+        </>
       )}
-    </>
+    </PageBackground>
   );
 };
 

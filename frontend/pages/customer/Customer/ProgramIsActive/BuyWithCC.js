@@ -19,20 +19,17 @@ const BuyWithCC = ({ purchaseWithCC, product }) => (
     </div>
     <hr />
     <div className="px-10 flex-column">
-      <p className="text-xs text-gray-500 mt-10">
-        <ul className="list-disc pl-6">
-          <li>This will simulate purchase via Credit Card</li>
-          <li>
-            When you click this button, a request will be sent to backend.js where normally a payment via 
-            a credit card would be made. 
-          </li>
-          <li>
-            Upon 'successful' simulated CC payment, it's time to transfer tokens to
-            your own personal account that is created upon your first purchase. The manager contract calls the FT contract
-            perform the transfer.
-          </li>
-        </ul>
-      </p>
+      <ul className="list-disc pl-6 text-xs text-gray-500 mt-10">
+        <li>This will simulate purchase via Credit Card</li>
+        <li>
+          When you click this button, a request will be sent to backend.js where normally a payment via a credit card
+          would be made.
+        </li>
+        <li>
+          Upon 'successful' simulated CC payment, it's time to transfer tokens to your own personal account that is
+          created upon your first purchase. The manager contract calls the FT contract perform the transfer.
+        </li>
+      </ul>
     </div>
   </div>
 );

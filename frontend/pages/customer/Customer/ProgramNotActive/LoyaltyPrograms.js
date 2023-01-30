@@ -3,7 +3,7 @@ const LoyaltyPrograms = ({ programsList, wallet }) => {
     <div className="mt-2 leading-4 mt-2 overflow-hidden text-left shadow-2xl ring-1 ring-gray-900/5 rounded-2xl">
       <div className=" bg-white text-base">
         {programsList?.map((program, i) => (
-          <div className={`${i % 2 && 'bg-gray-100'} px-4 py-5 `}>
+          <div key={i} className={`${i % 2 && 'bg-gray-100'} px-4 py-5 `}>
             <div className="flex mb-2">
               <div className="text-3xl font-bold">
                 {program.contracts.ft.token_name} -

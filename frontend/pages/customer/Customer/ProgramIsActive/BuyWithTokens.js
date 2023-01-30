@@ -25,21 +25,17 @@ const BuyWithTokens = ({ canCollect, purchaseWithTokens, product, ftMetadata }) 
         </div>
         <hr />
         <div className="px-10 flex-column">
-          <p className="text-xs text-gray-500 mt-10">
-            <ul className="list-disc pl-6">
-              <li>
-                If you can use this option this means that an account was already created for you
-                (this happens when you buy a coffee with CC for the first time)
-              </li>
-              <li>
-                The call is made to the FT contract to transfer tokens from your account to manager's account.
-              </li>
-              <li>
-                The call is authorized with a pair of keys associated with this account. Only you have the access
-                to your tokens.
-              </li>
-            </ul>
-          </p>
+          <ul className="list-disc pl-6 text-xs text-gray-500 mt-10">
+            <li>
+              If you can use this option this means that an account was already created for you (this happens when you
+              buy a coffee with CC for the first time)
+            </li>
+            <li>The call is made to the FT contract to transfer tokens from your account to manager's account.</li>
+            <li>
+              The call is authorized with a pair of keys associated with this account. Only you have the access to your
+              tokens.
+            </li>
+          </ul>
         </div>
       </div>
     </div>

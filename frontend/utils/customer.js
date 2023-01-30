@@ -1,14 +1,17 @@
 import { getCustomerPrefix, getManagerContract, getFtContract } from './utils';
-
+import { backend } from './backend';
 const { utils, keyStores, connect, Contract } = require('near-api-js');
 const FT_TGAS = '3000000000000';
 const TOKENS_FOR_COFFEE = '30';
 const FT_TRANSFER_MIN_DEPOSIT = '1';
+const NETWORK_ID = 'testnet';
 
-export class Customer {
-  constructor({ networkId, backend }) {
-    this.networkId = networkId;
-    this.keyStore = new keyStores.BrowserLocalStorageKeyStore();
+class Customer {
+  constructor() {
+    this.networkId = NETWORK_ID;
+    if (typeof window !== 'undefined') {
+      this.keyStore = new keyStores.BrowserLocalStorageKeyStore();
+    }
     this.backend = backend;
   }
 
@@ -100,3 +103,5 @@ export class Customer {
     return getFtContract();
   }
 }
+
+export const customer = new Customer();

@@ -11,6 +11,8 @@ const ProgramIsActive = ({
   purchaseWithCC,
   canCollect,
   purchaseWithTokens,
+  buyWithCCLoader,
+  buyWithTokensLoader,
 }) => (
   <>
     <div className="grid grid-cols-3 gap-10 mt-10">
@@ -19,12 +21,13 @@ const ProgramIsActive = ({
     </div>
 
     <div className="grid grid-cols-2 gap-10 mt-10" style={{ height: '34rem' }}>
-      <BuyWithCC purchaseWithCC={purchaseWithCC} product={product} />
+      <BuyWithCC purchaseWithCC={purchaseWithCC} product={product} buyWithCCLoader={buyWithCCLoader} />
       <BuyWithTokens
         canCollect={canCollect}
         purchaseWithTokens={purchaseWithTokens}
         product={product}
         ftMetadata={ftMetadata}
+        buyWithTokensLoader={buyWithTokensLoader}
       />
     </div>
   </>

@@ -1,24 +1,22 @@
 /* Interface to talk with the contract factory */
 import { getManagerContract } from './utils';
 import { wallet } from './wallet-selector';
+import { backend } from './backend';
 
 const { utils, providers } = require('near-api-js');
 
 const MAX_TGAS = '300000000000000';
 const DEPOSIT = '4989140000000000000000000';
-const NO_DEPOSIT = '0';
+const FACTORY_ADDRESS = process.env.CONTRACT_NAME;
 
-export class Factory {
-  constructor({ contractId, backend }) {
-    this.contractId = contractId;
+class Factory {
+  constructor() {
+    this.contractId = FACTORY_ADDRESS;
     this.backend = backend;
     this.provider = new providers.JsonRpcProvider('https://rpc.testnet.near.org');
   }
 
   async createFungibleToken(name, symbol, totalSupply) {
-    // tutaj jest problem, bo `setKeyPairForManager` jest wywolywane tylko przy tworzeniu tokena
-    //  - wiec jak sie zaloguje na konto, ktore juz ma token (wiec sie go nie tworzy) to nie da sie kupic kawy bo `createAndTransfer` wyrzuca blad, bo nie ma keyPair
-    //  - to `this.backend.setKeyPairForManager` musi byc wywolywane przy kazdym zalogowaniu
     let keyPair = await this.createKeyPair();
     await this.backend.setKeyPairForManager(keyPair);
 
@@ -73,3 +71,5 @@ export class Factory {
     return getManagerContract();
   }
 }
+
+export const factory = new Factory();

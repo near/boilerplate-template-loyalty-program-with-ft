@@ -5,24 +5,17 @@ import ProgramIsActive from './ProgramIsActive';
 import ProgramNotActive from './ProgramNotActive';
 import Welcome from './Welcome';
 import { useRouter } from 'next/router';
-
-import { Backend } from '../../../utils/backend';
-import { Customer } from '../../../utils/customer';
-
-// NEAR
-import { Factory } from '../../../utils/near-ft-factory';
 import PageBackground from '../../../components/PageBackground';
-
-const FACTORY_ADDRESS = process.env.CONTRACT_NAME;
-const NETWORK_ID = 'testnet';
-
-let backend;
-let factory;
-let customer;
+import Loader from '../../../components/Loader';
+import { backend } from '../../../utils/backend';
+import { factory } from '../../../utils/near-ft-factory';
+import { customer } from '../../../utils/customer';
 
 const CustomerView = () => {
   const router = useRouter();
   const merchantAddress = router.query.program;
+
+  const [mainLoader, setMainLoader] = useState(true);
 
   const [programExists, setProgramExists] = useState(false);
   const [ftMetadata, setFtMetadata] = useState({});
@@ -30,20 +23,16 @@ const CustomerView = () => {
   const [customerBalance, setCustomerBalance] = useState();
   const [customerUuid, setCustomerUuid] = useState('');
   const [programsList, setProgramsList] = useState([]);
-  const [loader, setLoader] = useState(true);
+  const [buyWithCCLoader, setBuyWithCCLoader] = useState(false);
+  const [buyWithTokensLoader, setBuyWithTokensLoader] = useState(false);
 
-  useEffect(() => {
-    backend = new Backend({ networkId: NETWORK_ID });
-    factory = new Factory({ contractId: FACTORY_ADDRESS, backend });
-    customer = new Customer({ networkId: NETWORK_ID, backend });
-  }, []);
-
+  // TODO: instead of calling backend directly, create a frontend class that will handle backend - it will be much clearer logically
   useEffect(() => {
     const checkSignIn = async () => {
       await backend.startUp();
       const isProgramActive = !!backend.checkIsProgramActive();
 
-      setLoader(false);
+      setMainLoader(false);
       setIsProgramActive(isProgramActive);
     };
 
@@ -51,18 +40,28 @@ const CustomerView = () => {
   }, []);
 
   function purchaseWithCC(e) {
+    setBuyWithCCLoader(true);
+
     customer
       .purchaseCoffeeWithCC()
-      .then(() => alert('Coffee bought with Credit Card'))
+      .then(() => {
+        alert('Coffee bought with Credit Card');
+        setBuyWithCCLoader(false);
+      })
       .then(() => customer.getBalance().then((b) => setCustomerBalance(b)))
       .catch(alert)
       .catch(alert);
   }
 
   async function purchaseWithTokens(e) {
+    setBuyWithTokensLoader(true);
+
     customer
       .purchaseCoffeeWithTokens()
-      .then(() => alert('Coffee bought with tokens'))
+      .then(() => {
+        alert('Coffee bought with tokens');
+        setBuyWithTokensLoader(true);
+      })
       .then(() => customer.getBalance().then((b) => setCustomerBalance(b)))
       .catch(alert)
       .catch(alert);
@@ -73,10 +72,16 @@ const CustomerView = () => {
       return;
     }
 
-    setCustomerUuid(getCustomerPrefix());
-    factory.checkProgramExists(merchantAddress).then((programExists) => {
-      setProgramExists(programExists);
-    });
+    const checkProgramExists = async () => {
+      setCustomerUuid(getCustomerPrefix());
+      await factory.checkProgramExists(merchantAddress).then((programExists) => {
+        setProgramExists(programExists);
+      });
+      setMainLoader(false);
+    };
+
+    setMainLoader(true);
+    checkProgramExists();
   }, [isProgramActive, merchantAddress]);
 
   useEffect(() => {
@@ -90,15 +95,20 @@ const CustomerView = () => {
       return;
     }
 
-    factory
-      .getProgram(merchantAddress)
-      .then((metadata) => {
-        setFtMetadata(metadata.ft);
-      })
-      .then(() => customer.getBalance().then((b) => setCustomerBalance(b)))
-      .catch(alert);
-  }, [merchantAddress, programExists]);
+    const checkProgramExists = async () => {
+      const metadata = await factory.getProgram(merchantAddress);
+      setFtMetadata(metadata.ft);
 
+      const balance = await customer.getBalance();
+      setCustomerBalance(balance);
+      setMainLoader(false);
+    };
+
+    setMainLoader(true);
+    checkProgramExists();
+  }, [isProgramActive, merchantAddress, programExists]);
+
+  // TODO: global
   const product = {
     name: 'Large Coffe',
     fiatCost: '$9.99',
@@ -110,23 +120,28 @@ const CustomerView = () => {
   const programIsActive = !!ftMetadata.account_id;
 
   return (
-    !loader && (
-      <PageBackground variant="customer" header={<Header />}>
-        <Welcome ftMetadata={ftMetadata} programIsActive={programIsActive} merchantAddress={merchantAddress} />
-        {programIsActive && (
-          <ProgramIsActive
-            ftMetadata={ftMetadata}
-            product={product}
-            customerUuid={customerUuid}
-            customerBalance={customerBalance}
-            purchaseWithCC={purchaseWithCC}
-            canCollect={canCollect}
-            purchaseWithTokens={purchaseWithTokens}
-          />
-        )}
-        {programIsActive || <ProgramNotActive programsList={programsList} />}
-      </PageBackground>
-    )
+    <PageBackground variant="customer" header={<Header />}>
+      {mainLoader && <Loader />}
+      {mainLoader || (
+        <>
+          <Welcome ftMetadata={ftMetadata} programIsActive={programIsActive} merchantAddress={merchantAddress} />
+          {programIsActive && (
+            <ProgramIsActive
+              ftMetadata={ftMetadata}
+              product={product}
+              customerUuid={customerUuid}
+              customerBalance={customerBalance}
+              purchaseWithCC={purchaseWithCC}
+              canCollect={canCollect}
+              purchaseWithTokens={purchaseWithTokens}
+              buyWithCCLoader={buyWithCCLoader}
+              buyWithTokensLoader={buyWithTokensLoader}
+            />
+          )}
+          {programIsActive || <ProgramNotActive programsList={programsList} />}
+        </>
+      )}
+    </PageBackground>
   );
 };
 

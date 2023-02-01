@@ -5,11 +5,13 @@ const { keyStores, connect, Contract } = require('near-api-js');
 
 const MAX_TGAS = '300000000000000';
 const TOTAL_DEPOSIT = '100000000000000000000000';
+const NETWORK_ID = 'testnet';
 
-export class Backend {
-  constructor({ networkId }) {
-    this.keyStore = new keyStores.BrowserLocalStorageKeyStore();
-    this.networkId = networkId;
+class Backend {
+  constructor() {
+    if (typeof window !== 'undefined') {
+      this.keyStore = new keyStores.BrowserLocalStorageKeyStore();
+    }
   }
 
   async createAndTransfer(publicKey, prefix) {
@@ -19,10 +21,10 @@ export class Backend {
 
     const keyPair = await this.getKeyPair();
     const inMemoryKeyStore = new keyStores.InMemoryKeyStore();
-    inMemoryKeyStore.setKey(this.networkId, this.getAccountName(), keyPair);
+    inMemoryKeyStore.setKey(NETWORK_ID, this.getAccountName(), keyPair);
 
     const connectionConfig = {
-      networkId: this.networkId,
+      networkId: NETWORK_ID,
       keyStore: inMemoryKeyStore,
       nodeUrl: 'https://rpc.testnet.near.org',
       walletUrl: 'https://wallet.testnet.near.org',
@@ -50,11 +52,11 @@ export class Backend {
   }
 
   async setKeyPairForManager(keyPair) {
-    await this.keyStore.setKey(this.networkId, this.getAccountName(), keyPair);
+    await this.keyStore.setKey(NETWORK_ID, this.getAccountName(), keyPair);
   }
 
   async getKeyPair() {
-    return await this.keyStore.getKey(this.networkId, this.getAccountName());
+    return await this.keyStore.getKey(NETWORK_ID, this.getAccountName());
   }
 
   getAccountName() {
@@ -70,3 +72,5 @@ export class Backend {
     return isSignedIn;
   }
 }
+
+export const backend = new Backend();

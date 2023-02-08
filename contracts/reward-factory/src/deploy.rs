@@ -44,7 +44,7 @@ impl Contract {
         // Assert the sub-account is valid
         let current_account = env::current_account_id().to_string();
         let ft_subaccount: AccountId = format!("{username}-ft.{current_account}").parse().unwrap();
-        let manager_subaccount: AccountId = format!("{username}-manager.{current_account}")
+        let manager_subaccount: AccountId = format!("{username}-mg.{current_account}")
             .parse()
             .unwrap();
 

@@ -4,7 +4,7 @@ const FACTORY_ADDRESS = process.env.CONTRACT_NAME;
 const CUSTOMER_PREFIX_KEY = 'near.loyalty-program.customer.prefix.';
 const MERCHANT_ID_KEY = 'near.loyalty-program.merchant.id';
 
-const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 13);
+const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 4);
 
 export function getCustomerPrefix() {
   const prefix = CUSTOMER_PREFIX_KEY + getMerchantId();
@@ -34,7 +34,7 @@ export function setMerchantId(merchantAccountId) {
 
 export function getManagerContract() {
   const merchant = getMerchantId();
-  return merchant + '-manager.' + FACTORY_ADDRESS;
+  return merchant + '-mg.' + FACTORY_ADDRESS;
 }
 
 export function getFtContract() {

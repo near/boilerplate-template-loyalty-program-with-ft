@@ -33,18 +33,15 @@ impl Contract {
         token_symbol: String,
         token_total_supply: U128,
         public_key: Option<PublicKey>,
+        random_id: String
     ) -> Promise {
         // TODO: Add check for existence
         // TODO: Ask money for storage deposit
 
-        // Better handle this
-        let user = env::predecessor_account_id();
-        let username = user.as_str().split('.').next().unwrap();
-
         // Assert the sub-account is valid
         let current_account = env::current_account_id().to_string();
-        let ft_subaccount: AccountId = format!("{username}-ft.{current_account}").parse().unwrap();
-        let manager_subaccount: AccountId = format!("{username}-manager.{current_account}")
+        let ft_subaccount: AccountId = format!("{random_id}-ft.{current_account}").parse().unwrap();
+        let manager_subaccount: AccountId = format!("{random_id}-manager.{current_account}")
             .parse()
             .unwrap();
 

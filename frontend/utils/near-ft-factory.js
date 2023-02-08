@@ -1,9 +1,13 @@
 /* Interface to talk with the contract factory */
-import { getManagerContract } from './utils';
+import { customAlphabet } from 'nanoid';
+
+import { getManagerContract, setRandomIdForMerchant } from './utils';
 import { wallet } from './wallet-selector';
 import { backend } from './backend';
 
 const { utils, providers } = require('near-api-js');
+
+const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 8);
 
 const MAX_TGAS = '300000000000000';
 const DEPOSIT = '4989140000000000000000000';
@@ -18,6 +22,8 @@ class Factory {
 
   async createFungibleToken(name, symbol, totalSupply) {
     let keyPair = await this.createKeyPair();
+    let randomId = nanoid();
+    setRandomIdForMerchant(randomId);
     await this.backend.setKeyPairForManager(keyPair);
 
     return await wallet.callMethod({
@@ -28,6 +34,7 @@ class Factory {
         token_symbol: symbol,
         token_total_supply: totalSupply,
         public_key: keyPair.getPublicKey().toString(),
+        random_id: randomId
       },
       deposit: DEPOSIT,
       gas: MAX_TGAS,

@@ -19,6 +19,7 @@ const CustomerView = () => {
 
   const [programExists, setProgramExists] = useState(false);
   const [ftMetadata, setFtMetadata] = useState({});
+  const [managerContract, setManagerContract] = useState({});
   const [isProgramActive, setIsProgramActive] = useState(false);
   const [customerBalance, setCustomerBalance] = useState();
   const [customerUuid, setCustomerUuid] = useState('');
@@ -98,6 +99,7 @@ const CustomerView = () => {
     const checkProgramExists = async () => {
       const metadata = await factory.getProgram(merchantAddress);
       setFtMetadata(metadata.ft);
+      setManagerContract(metadata.manager);
 
       const balance = await customer.getBalance();
       setCustomerBalance(balance);
@@ -136,6 +138,7 @@ const CustomerView = () => {
               purchaseWithTokens={purchaseWithTokens}
               buyWithCCLoader={buyWithCCLoader}
               buyWithTokensLoader={buyWithTokensLoader}
+              managerContract={managerContract}
             />
           )}
           {programIsActive || <ProgramNotActive programsList={programsList} />}

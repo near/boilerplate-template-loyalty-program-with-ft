@@ -19,12 +19,12 @@ const RewardProgramDetails = ({ ftMetadata }) => (
         that communicates both with the backend and the FT contract to get and spend some tokens that you just created.
         <br />
         <br />
-        Clicking on 'Open customer app' generates a link with merchant account id. That's how your account id is passed to
+        Clicking on 'Open customer app' generates a link with merchant account id. That's how you account id is passed to
         the customer app. The factory contract stores information about all loyalty programs deployed by merchants. This 
         information is fetched by the customer app.
         <br />
         <br />
-        If you log out, the customer app will be deactivated. Log in again to activate the backend for the customer app.
+        If you log in, the customer app will be deactivated. Log in again to activate the backend for the customer app.
         <br />
       </p>
     </div>

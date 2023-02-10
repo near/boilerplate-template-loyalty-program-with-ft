@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { getCustomerPrefix } from '../../../utils/utils';
+import { getCustomerPrefix } from '../../utils/utils';
 import Header from './Header';
 import ProgramIsActive from './ProgramIsActive';
 import ProgramNotActive from './ProgramNotActive';
 import Welcome from './Welcome';
 import { useRouter } from 'next/router';
-import PageBackground from '../../../components/PageBackground';
-import Loader from '../../../components/Loader';
-import { backend } from '../../../utils/backend';
-import { factory } from '../../../utils/near-ft-factory';
-import { customer } from '../../../utils/customer';
+import PageBackground from '../PageBackground';
+import Loader from '../Loader';
+import { backend } from '../../utils/backend';
+import { factory } from '../../utils/near-ft-factory';
+import { customer } from '../../utils/customer';
 
 const CustomerView = () => {
   const router = useRouter();
@@ -19,7 +19,6 @@ const CustomerView = () => {
 
   const [programExists, setProgramExists] = useState(false);
   const [ftMetadata, setFtMetadata] = useState({});
-  const [managerContract, setManagerContract] = useState({});
   const [isProgramActive, setIsProgramActive] = useState(false);
   const [customerBalance, setCustomerBalance] = useState();
   const [customerUuid, setCustomerUuid] = useState('');
@@ -99,7 +98,6 @@ const CustomerView = () => {
     const checkProgramExists = async () => {
       const metadata = await factory.getProgram(merchantAddress);
       setFtMetadata(metadata.ft);
-      setManagerContract(metadata.manager);
 
       const balance = await customer.getBalance();
       setCustomerBalance(balance);
@@ -138,7 +136,6 @@ const CustomerView = () => {
               purchaseWithTokens={purchaseWithTokens}
               buyWithCCLoader={buyWithCCLoader}
               buyWithTokensLoader={buyWithTokensLoader}
-              managerContract={managerContract}
             />
           )}
           {programIsActive || <ProgramNotActive programsList={programsList} />}

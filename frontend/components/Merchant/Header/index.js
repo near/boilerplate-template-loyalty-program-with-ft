@@ -1,7 +1,7 @@
 // import { Link } from 'react-router-dom';
-import HeaderSection from '../../../../components/HeaderSection';
-import Sign from '../../../../components/Sign';
-import { getMerchantAddress } from '../../../../utils/utils';
+import HeaderSection from '../../HeaderSection';
+import Sign from '../../Sign';
+import { getMerchantAddress } from '../../../utils/utils';
 
 const Header = ({ isSignedIn, programExists }) => {
   return (

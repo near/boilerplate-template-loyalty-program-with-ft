@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 
 import Header from './Header';
-import { getMerchantAddress } from '../../../utils/utils';
+import { getMerchantAddress } from '../../utils/utils';
 import Welcome from './Welcome/Welcome';
 import SignedOut from './SignedOut';
 import SignedIn from './SignedIn';
-import PageBackground from '../../../components/PageBackground';
-import Loader from '../../../components/Loader';
-import { backend } from '../../../utils/backend';
-import { factory } from '../../../utils/near-ft-factory';
+import PageBackground from '../PageBackground';
+import Loader from '../Loader';
+import { backend } from '../../utils/backend';
+import { factory } from '../../utils/near-ft-factory';
 
 const MarchantPage = () => {
   const [mainLoader, setMainLoader] = useState(true);

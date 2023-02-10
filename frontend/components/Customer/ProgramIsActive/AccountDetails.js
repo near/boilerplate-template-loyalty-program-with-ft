@@ -1,6 +1,6 @@
 import ListOfTx from './ListOfTx';
 
-const AccountDetails = ({ customerUuid, ftMetadata, customerBalance, managerContract }) => (
+const AccountDetails = ({ customerUuid, ftMetadata, customerBalance }) => (
   <div className="col-span-2">
     <div className="pt-2 leading-4">
       <h1 className="text-4xl font-bold leading-relaxed">Your account details</h1>
@@ -28,13 +28,11 @@ const AccountDetails = ({ customerUuid, ftMetadata, customerBalance, managerCont
         <>
           <p className="mt-6 text-gray-600">Your User ID for {ftMetadata.token_name} Loyalty Program:</p>
           <p className="text-gray-900 text-2xl font-bold">{customerUuid}</p>
-          <p className="mt-6 text-gray-600">Your Account ID for Loyalty Program:</p>
-          <p className="text-gray-900 text-2xl font-bold">{customerUuid + "." + managerContract}</p>
           <p className="mt-6 text-gray-600">Your {ftMetadata.token_symbol} token balance is:</p>
           <p className="text-gray-900 text-2xl font-bold">
             {customerBalance} {ftMetadata.token_symbol}
           </p>
-          <ListOfTx customerAccountId={customerUuid + "." + managerContract}/>
+          <ListOfTx />
         </>
       )}
     </div>

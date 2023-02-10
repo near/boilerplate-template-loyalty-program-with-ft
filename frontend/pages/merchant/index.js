@@ -1,4 +1,4 @@
-import MarchantPage from './Merchant/index';
+import MarchantPage from '../../components/Merchant/index';
 
 const Merchant = () => <MarchantPage />;
 

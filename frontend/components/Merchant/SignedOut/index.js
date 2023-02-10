@@ -1,4 +1,4 @@
-import LoyaltyPrograms from '../../../../components/LoyaltyPrograms';
+import LoyaltyPrograms from '../../LoyaltyPrograms';
 
 const SignedOut = ({ programsList, wallet }) => (
   <div className="mt-10">

@@ -1,7 +1,7 @@
-const ListOfTx = ({ customerAccountId }) => (
+const ListOfTx = () => (
   <div className="mt-6">
     <a
-      href={"https://explorer.testnet.near.org/accounts/" + customerAccountId}
+      href="https://explorer.testnet.near.org/"
       target="_blank"
       rel="noreferrer"
       className="text-lg font-semibold leading-6 text-indigo-600 hover:text-indigo-400"

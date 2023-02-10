@@ -9,7 +9,7 @@ const Header = ({ isSignedIn, programExists }) => {
       {programExists && (
         <div className="mr-4">
           <a
-            href={`/customer/${getMerchantAddress()}`}
+            href={`/customer?program=${getMerchantAddress()}`}
             className="rounded-md bg-indigo-500 px-3.5 py-3 text-base leading-7 text-white shadow-sm hover:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             Open Customer App

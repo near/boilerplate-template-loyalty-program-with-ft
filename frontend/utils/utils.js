@@ -3,8 +3,10 @@ import { customAlphabet } from 'nanoid';
 const FACTORY_ADDRESS = process.env.CONTRACT_NAME;
 const CUSTOMER_PREFIX_KEY = 'near.loyalty-program.customer.prefix.';
 const MERCHANT_ID_KEY = 'near.loyalty-program.merchant.id';
+const MERCHANT_RANDOM_ID_KEY = 'near.loyalty-program.merchant.random.id.';
 
-const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 13);
+
+const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 4);
 
 export function getCustomerPrefix() {
   const prefix = CUSTOMER_PREFIX_KEY + getMerchantId();
@@ -33,16 +35,26 @@ export function setMerchantId(merchantAccountId) {
 }
 
 export function getManagerContract() {
-  const merchant = getMerchantId();
+  const merchant = getRandomIdForMerchant();
   return merchant + '-manager.' + FACTORY_ADDRESS;
 }
 
 export function getFtContract() {
-  const merchant = getMerchantId();
+  const merchant = getRandomIdForMerchant();
   return merchant + '-ft.' + FACTORY_ADDRESS;
 }
 
 export function getMerchantAddress() {
   const merchant = getMerchantId();
   return merchant + '.testnet';
+}
+
+export function setRandomIdForMerchant(randomId) {
+  const merchantAddress = getMerchantAddress();
+  localStorage.setItem(MERCHANT_RANDOM_ID_KEY + merchantAddress, randomId);
+}
+
+export function getRandomIdForMerchant() {
+  const merchantAddress = getMerchantAddress();
+  return getItemFromLocalStorage(MERCHANT_RANDOM_ID_KEY + merchantAddress);
 }

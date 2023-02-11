@@ -3,7 +3,7 @@ import Link from 'next/link';
 const App = () => (
   <div className="grid grid-cols-2 mt-20">
     <div className="text-center">
-      <Link href="/merchant" className="text-8xl">
+      <Link href="/merchant/" className="text-8xl">
         <span className="font-thin text-4xl">open</span>
         <br />
         <span className="hover:text-indigo-500">Merchant</span>
@@ -12,7 +12,7 @@ const App = () => (
       </Link>
     </div>
     <div className="text-center">
-      <Link href="/customer" className="text-8xl">
+      <Link href="/customer/" className="text-8xl">
         <span className="font-thin text-4xl">open</span>
         <br />
         <span className="hover:text-indigo-500">Client</span>

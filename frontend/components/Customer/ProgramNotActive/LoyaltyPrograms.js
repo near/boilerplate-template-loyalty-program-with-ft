@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 const LoyaltyPrograms = ({ programsList, wallet }) => (
   <div className="mt-2 leading-4 mt-2 overflow-hidden text-left shadow-2xl ring-1 ring-gray-900/5 rounded-2xl">
     <div className=" bg-white text-base">
@@ -14,12 +16,12 @@ const LoyaltyPrograms = ({ programsList, wallet }) => (
             </div>
             {wallet.accountId === program.accountId && (
               <div className="mt-2 ml-4">
-                <a
+                <Link
                   href={`/customer/${program.accountId}`}
                   className="rounded-md bg-indigo-500 px-3.5 py-3 text-base leading-7 text-white shadow-sm hover:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Open Loyalty Program App
-                </a>
+                </Link>
               </div>
             )}
           </div>

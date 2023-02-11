@@ -1,4 +1,5 @@
 import { wallet } from '../../utils/wallet-selector';
+import Link from 'next/link';
 
 const LoyaltyPrograms = ({ programsList, details = true }) => (
   <div className="mt-2 leading-4 mt-2 overflow-hidden text-left shadow-2xl ring-1 ring-gray-900/5 rounded-2xl">
@@ -16,12 +17,12 @@ const LoyaltyPrograms = ({ programsList, details = true }) => (
             </div>
             {wallet?.accountId === program.accountId && (
               <div className="mt-2 ml-4">
-                <a
-                  href={`/customer?program=${program.accountId}`}
+                <Link
+                  href={`/customer/${program.accountId}`}
                   className="rounded-md bg-indigo-500 px-3.5 py-3 text-base leading-7 text-white shadow-sm hover:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Open Loyalty Program App
-                </a>
+                </Link>
               </div>
             )}
           </div>

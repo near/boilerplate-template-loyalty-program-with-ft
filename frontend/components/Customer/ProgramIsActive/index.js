@@ -13,10 +13,16 @@ const ProgramIsActive = ({
   purchaseWithTokens,
   buyWithCCLoader,
   buyWithTokensLoader,
+  managerContract,
 }) => (
   <>
     <div className="grid grid-cols-3 gap-10 mt-10">
-      <AccountDetails customerUuid={customerUuid} ftMetadata={ftMetadata} customerBalance={customerBalance} />
+      <AccountDetails
+        customerUuid={customerUuid}
+        ftMetadata={ftMetadata}
+        customerBalance={customerBalance}
+        managerContract={managerContract}
+      />
       <Rules ftMetadata={ftMetadata} product={product} />
     </div>
 

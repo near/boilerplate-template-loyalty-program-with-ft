@@ -6,25 +6,27 @@ const RewardProgramDetails = ({ ftMetadata }) => (
       </div>
       <hr />
       <p className="mt-6 text-sm leading-6 text-gray-600">
-        Congratulations! You just created a loyalty program! The factory contract deployed a pair of contracts assigned to 
-        your account: manager contract and FT contract. The FT contract was initialized with the fungible token metadata 
-        that you provided in the previous step. Go to 'contracts' directory to learn more.
+        Congratulations! You just created a loyalty program! The factory contract deployed a pair of contracts assigned
+        to your account: manager contract and FT contract. The FT contract was initialized with the fungible token
+        metadata that you provided in the previous step. Go to 'contracts' directory to learn more.
         <br />
         <br />
-        This project is just a template and some things are simplified. The web2 backend is simulated on the frontend (see: frontend/backend.js).
-        As long as you are logged in, the backend remains in the active state and customers can use your loyalty program.
+        This project is just a template and some things are simplified. The web2 backend is simulated on the frontend
+        (see: frontend/backend.js). As long as you are logged in, the backend remains in the active state and customers
+        can use your loyalty program.
         <br />
         <br />
-        Click 'Open customer app' to see how a customer can interact with your loyalty program. This is a separate service
-        that communicates both with the backend and the FT contract to get and spend some tokens that you just created.
+        Click 'Open customer app' to see how a customer can interact with your loyalty program. This is a separate
+        service that communicates both with the backend and the FT contract to get and spend some tokens that you just
+        created.
         <br />
         <br />
-        Clicking on 'Open customer app' generates a link with merchant account id. That's how you account id is passed to
-        the customer app. The factory contract stores information about all loyalty programs deployed by merchants. This 
-        information is fetched by the customer app.
+        Clicking on 'Open customer app' generates a link with merchant account id. That's how your account id is passed
+        to the customer app. The factory contract stores information about all loyalty programs deployed by merchants.
+        This information is fetched by the customer app.
         <br />
         <br />
-        If you log in, the customer app will be deactivated. Log in again to activate the backend for the customer app.
+        If you log out, the customer app will be deactivated. Log in again to activate the backend for the customer app.
         <br />
       </p>
     </div>

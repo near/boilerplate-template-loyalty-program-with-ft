@@ -1,4 +1,4 @@
-import LoyaltyPrograms from '../../LoyaltyPrograms';
+import LoyaltyPrograms from '../../../components/LoyaltyPrograms';
 
 const ProgramNotActive = ({ programsList }) => <LoyaltyPrograms programsList={programsList} details={false} />;
 

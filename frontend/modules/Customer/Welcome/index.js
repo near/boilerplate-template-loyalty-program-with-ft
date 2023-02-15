@@ -1,4 +1,4 @@
-import WelcomeSection from '../../WelcomeSection';
+import WelcomeSection from '../../../components/WelcomeSection';
 
 const Welcome = ({ ftMetadata, programIsActive, merchantAddress }) => (
   <WelcomeSection>

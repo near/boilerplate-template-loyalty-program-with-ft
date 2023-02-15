@@ -1,6 +1,6 @@
 // import { Link } from 'react-router-dom';
-import HeaderSection from '../../HeaderSection';
-import Sign from '../../Sign';
+import HeaderSection from '../../../components/HeaderSection';
+import Sign from '../../../components/Sign';
 import { getMerchantAddress } from '../../../utils/utils';
 import Link from 'next/link';
 

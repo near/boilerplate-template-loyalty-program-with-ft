@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { getCustomerPrefix } from '../../../utils/utils';
+import { getCustomerPrefix } from '../../utils/utils';
 import Header from './Header';
 import ProgramIsActive from './ProgramIsActive';
 import ProgramNotActive from './ProgramNotActive';
 import Welcome from './Welcome';
 import { useRouter } from 'next/router';
-import PageBackground from '../../../components/PageBackground';
-import Loader from '../../../components/Loader';
-import { backend } from '../../../utils/backend';
-import { factory } from '../../../utils/near-ft-factory';
-import { customer } from '../../../utils/customer';
+import PageBackground from '../../components/PageBackground';
+import Loader from '../../components/Loader';
+import { backend } from '../../utils/backend';
+import { factory } from '../../utils/near-ft-factory';
+import { customer } from '../../utils/customer';
 
 const CustomerView = () => {
   const router = useRouter();

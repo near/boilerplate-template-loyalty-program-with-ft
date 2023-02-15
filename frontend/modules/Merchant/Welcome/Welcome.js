@@ -1,6 +1,6 @@
-import SignInButton from '../../../../components/Sign/SignInButton';
-import WelcomeSection from '../../../../components/WelcomeSection';
-import { wallet } from '../../../../utils/wallet-selector';
+import SignInButton from '../../../components/Sign/SignInButton';
+import WelcomeSection from '../../../components/WelcomeSection';
+import { wallet } from '../../../utils/wallet-selector';
 
 const Welcome = ({ isSignedIn, programExists, ftMetadata }) => (
   <WelcomeSection>

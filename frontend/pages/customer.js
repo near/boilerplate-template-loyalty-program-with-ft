@@ -1,5 +1,5 @@
 import React from 'react';
-import CustomerView from './Customer/index';
+import CustomerView from '../modules/Customer';
 
 const Customer = () => <CustomerView />;
 
